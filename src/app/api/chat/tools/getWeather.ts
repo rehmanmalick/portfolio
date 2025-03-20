@@ -10,6 +10,8 @@ export const getWeather = tool({
   }),
   execute: async ({ city }: { city: string }) => {
     const weatherOptions = ['sunny', 'cloudy', 'rainy', 'snowy', 'windy'];
+    // fake wait for weather data
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     return weatherOptions[
       Math.floor(Math.random() * weatherOptions.length)
     ];

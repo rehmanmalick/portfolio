@@ -1,16 +1,16 @@
 "use client";
 
+import { useChat } from '@ai-sdk/react';
 import { ChatRequestOptions } from "ai";
 import { Message } from "ai/react";
-import { useChat } from '@ai-sdk/react';
 import React from "react";
 import { toast } from "sonner";
 
 import ChatBottombar from "@/components/chat/chat-bottombar";
 import SimpleChatView from "@/components/chat/simple-chat-view";
 
-import { ChatBubble, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
 import ChatMessageContent from "@/components/chat/chat-message-content";
+import { ChatBubble, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
 
 export interface ChatProps {
   id?: string;
@@ -106,7 +106,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-3xl h-full mx-auto">
+    <div className="flex flex-col w-full max-w-3xl h-screen mx-auto">
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Avatar placeholder - will be replaced with animated Memoji */}
         <div className="flex justify-center py-6">

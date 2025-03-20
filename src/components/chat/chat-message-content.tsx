@@ -1,3 +1,4 @@
+// src/components/chat/chat-message-content.tsx
 import { ChatRequestOptions } from "ai";
 import { Message } from "ai/react";
 import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
@@ -17,6 +18,27 @@ export type ChatMessageContentProps = {
   showActions?: boolean;
 };
 
+const CodeBlock = ({ content }: { content: string }) => {
+  // Extract language if present in the first line
+  const firstLineBreak = content.indexOf('\n');
+  const firstLine = content.substring(0, firstLineBreak).trim();
+  const language = firstLine || 'text';
+  const code = firstLine ? content.substring(firstLineBreak + 1) : content;
+
+  return (
+    <div className="my-4 rounded-md overflow-hidden">
+      {language !== 'text' && (
+        <div className="bg-secondary text-secondary-foreground text-xs px-4 py-1 rounded-t-md">
+          {language}
+        </div>
+      )}
+      <pre className="bg-accent/80 text-accent-foreground px-4 py-3 rounded-b-md overflow-x-auto">
+        <code className="text-sm">{code}</code>
+      </pre>
+    </div>
+  );
+};
+
 export default function ChatMessageContent({
   message,
   isLast,
@@ -33,92 +55,91 @@ export default function ChatMessageContent({
     setTimeout(() => setIsCopied(false), 1500);
   };
 
-  const renderParts = () => {
-    return message.parts?.map((part, index) => {
+  const renderContent = () => {
+    return message.parts?.map((part, partIndex) => {
       switch (part.type) {
-        case "text":
+        case "text": {
+          if (!part.text) return null;
+
+          // Split content by code block markers
+          const contentParts = part.text.split("```");
+
           return (
-            <Markdown
-              key={index}
-              remarkPlugins={[remarkGfm]}
-              components={{
-                p: ({ node, ...props }) => (
-                  <p className="my-2" {...props} />
-                ),
-                ul: ({ node, ...props }) => (
-                  <ul className="list-disc pl-5 my-1" {...props} />
-                ),
-                li: ({ node, ...props }) => (
-                  <li className="my-1" {...props} />
-                ),
-                code({
-                  node,
-                  inline,
-                  className,
-                  children,
-                  ...props
-                }: {
-                  node: any
-                  inline: boolean
-                  className: string
-                  children: any
-                  [key: string]: any
-                }) {
-                  const isBlock = !inline
-                  if (isBlock) {
-                    return (
-                      <pre className="bg-accent text-accent-foreground p-4 rounded-md overflow-auto my-2" {...props}>
-                        <code>{children}</code>
-                      </pre>
-                    )
-                  }
-                  return (
-                    <code className="bg-accent text-accent-foreground px-1 py-0.5 rounded" {...props}>
-                      {children}
-                    </code>
-                  )
-                },
-                a: ({ node, href, children, ...props }) => {
-                  return (
-                    <a
-                      href={href}
-                      className="underline text-blue-500"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      {...props}
-                    >
-                      {children}
-                    </a>
-                  )
-                },
-              }}
-            >
-              {part.text}
-            </Markdown>
+            <div key={partIndex} className="space-y-4">
+              {contentParts.map((content, i) => (
+                i % 2 === 0 ? (
+                  // Regular text content
+                  <div key={`text-${i}`} className="prose dark:prose-invert max-w-none">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                      {content}
+                    </Markdown>
+                  </div>
+                ) : (
+                  // Code block content
+                  <CodeBlock key={`code-${i}`} content={content} />
+                )
+              ))}
+            </div>
           );
+        }
+
         case "tool-invocation": {
-          const { toolCallId, toolName, state, result } = part.toolInvocation as {
+          const { toolCallId, toolName, state, args, result } = part.toolInvocation as {
             toolCallId: string;
             toolName: string;
             state: string;
-            result?: string
+            args?: Record<string, any>;
+            result?: any;
           };
 
-          // This is a placeholder for future tool implementation
-          // Will be customized based on specific tools
-          if (state === "partial-call" || state === "call") {
+          if (state === "partial-call") {
             return (
-              <div key={toolCallId} className="my-2 p-3 bg-secondary/30 rounded-lg">
-                <p className="text-sm font-medium">{toolName} is running...</p>
+              <div key={toolCallId} className="my-3 p-3 bg-secondary/20 rounded-lg border border-secondary/30 animate-pulse">
+                <p className="text-sm font-medium text-secondary-foreground/70">
+                  Preparing to use {toolName}...
+                </p>
+              </div>
+            );
+          }
+
+          if (state === "call") {
+            return (
+              <div key={toolCallId} className="my-3 p-4 bg-secondary/30 rounded-lg border border-secondary/40">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">{toolName}</p>
+                  <span className="px-2 py-0.5 text-xs bg-secondary text-secondary-foreground rounded-full">
+                    Running...
+                  </span>
+                </div>
+                {args && Object.keys(args).length > 0 && (
+                  <div className="mt-2 text-sm opacity-80">
+                    <code className="bg-secondary/30 p-2 rounded block overflow-x-auto">
+                      {JSON.stringify(args, null, 2)}
+                    </code>
+                  </div>
+                )}
               </div>
             );
           }
 
           if (state === "result") {
             return (
-              <div key={toolCallId} className="my-2 p-3 bg-secondary/30 rounded-lg">
-                <p className="text-sm font-medium">{toolName}</p>
-                <p>{String(result)}</p>
+              <div key={toolCallId} className="my-3 p-4 bg-secondary/20 rounded-lg border border-secondary/30">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">{toolName}</p>
+                  <span className="px-2 py-0.5 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full">
+                    Completed
+                  </span>
+                </div>
+                <div className="mt-2">
+                  {typeof result === 'object' ? (
+                    <pre className="bg-secondary/20 p-3 rounded text-sm overflow-x-auto">
+                      {JSON.stringify(result, null, 2)}
+                    </pre>
+                  ) : (
+                    <p>{String(result)}</p>
+                  )}
+                </div>
               </div>
             );
           }
@@ -132,27 +153,27 @@ export default function ChatMessageContent({
 
   const renderActionButtons = () =>
     showActions && message.role === "assistant" && (
-      <div className="pt-3 flex gap-1 items-center text-muted-foreground">
+      <div className="pt-3 flex gap-2 items-center text-muted-foreground">
         {!isLoading && (
-          <ButtonWithTooltip side="bottom" toolTipText="Copy">
-            <Button onClick={handleCopy} variant="ghost" size="icon" className="h-6 w-6">
+          <ButtonWithTooltip side="bottom" toolTipText="Copy response">
+            <Button onClick={handleCopy} variant="ghost" size="icon" className="h-8 w-8">
               {isCopied ? (
-                <CheckIcon className="w-3.5 h-3.5 transition-all" />
+                <CheckIcon className="w-4 h-4 text-green-500" />
               ) : (
-                <CopyIcon className="w-3.5 h-3.5 transition-all" />
+                <CopyIcon className="w-4 h-4" />
               )}
             </Button>
           </ButtonWithTooltip>
         )}
         {!isLoading && isLast && (
-          <ButtonWithTooltip side="bottom" toolTipText="Regenerate">
+          <ButtonWithTooltip side="bottom" toolTipText="Regenerate response">
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6"
+              className="h-8 w-8"
               onClick={() => reload()}
             >
-              <RefreshCcw className="w-3.5 h-3.5" />
+              <RefreshCcw className="w-4 h-4" />
             </Button>
           </ButtonWithTooltip>
         )}
@@ -161,7 +182,7 @@ export default function ChatMessageContent({
 
   return (
     <>
-      {renderParts()}
+      {renderContent()}
       {renderActionButtons()}
     </>
   );

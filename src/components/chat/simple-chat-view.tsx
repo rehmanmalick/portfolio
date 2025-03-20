@@ -36,7 +36,7 @@ export default function SimpleChatView({
   addToolResult,
 }: SimpleChatViewProps) {
   return (
-    <div className="w-full px-4 py-6 space-y-6">
+    <div className="w-full px-4 py-6 space-y-6 bg-pink-100">
       {messages.map((message, index) => (
         message.role === "assistant" && (
           <motion.div
@@ -46,9 +46,9 @@ export default function SimpleChatView({
           >
             <ChatBubble variant="received">
               <ChatBubbleAvatar
-                src="/blue_logo_bold.svg"
-                width={6}
-                height={6}
+                src="/favicon.svg"
+                width={4}
+                height={4}
                 className="object-contain"
               />
               <ChatBubbleMessage>
@@ -69,9 +69,9 @@ export default function SimpleChatView({
         <motion.div {...MOTION_CONFIG}>
           <ChatBubble variant="received">
             <ChatBubbleAvatar
-              src="/blue_logo_bold.svg"
-              width={6}
-              height={6}
+              src="/favicon.svg"
+              width={4}
+              height={4}
               className="object-contain"
             />
             <ChatBubbleMessage isLoading />
