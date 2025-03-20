@@ -11,7 +11,7 @@ const chatBubbleVariant = cva(
   {
     variants: {
       variant: {
-        received: "self-start bg-yellow-200",
+        received: "self-start",
         sent: "self-end flex-row-reverse",
       },
       layout: {
@@ -82,12 +82,12 @@ const ChatBubbleAvatar: React.FC<ChatBubbleAvatarProps> = ({
 );
 
 // ChatBubbleMessage
-const chatBubbleMessageVariants = cva("p-3 px-6", {
+const chatBubbleMessageVariants = cva("", {
   variants: {
     variant: {
       received:
         "text-secondary-foreground rounded-lg py-2",
-      sent: "bg-secondary text-secondary-foreground rounded-3xl",
+      sent: "p-2 px-5 bg-secondary text-secondary-foreground rounded-3xl",
     },
     layout: {
       default: "",

@@ -1,13 +1,13 @@
 // src/components/chat/chat-message-content.tsx
+import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import { ChatRequestOptions } from "ai";
 import { Message } from "ai/react";
-import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import ButtonWithTooltip from "../ui/button-with-tooltip";
 import { Button } from "../ui/button";
+import ButtonWithTooltip from "../ui/button-with-tooltip";
 
 export type ChatMessageContentProps = {
   message: Message;
@@ -16,6 +16,7 @@ export type ChatMessageContentProps = {
   reload: (chatRequestOptions?: ChatRequestOptions) => Promise<string | null | undefined>;
   addToolResult?: (args: { toolCallId: string; result: string }) => void;
   showActions?: boolean;
+  skipToolRendering?: boolean; // New prop to control tool rendering
 };
 
 const CodeBlock = ({ content }: { content: string }) => {
@@ -28,7 +29,7 @@ const CodeBlock = ({ content }: { content: string }) => {
   return (
     <div className="my-4 rounded-md overflow-hidden">
       {language !== 'text' && (
-        <div className="bg-secondary text-secondary-foreground text-xs px-4 py-1 rounded-t-md">
+        <div className="bg-secondary border-b text-secondary-foreground text-xs px-4 py-1 rounded-t-md">
           {language}
         </div>
       )}
@@ -45,15 +46,16 @@ export default function ChatMessageContent({
   isLoading,
   reload,
   addToolResult,
-  showActions = true
+  showActions = true,
+  skipToolRendering = false
 }: ChatMessageContentProps) {
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  //const [isCopied, setIsCopied] = useState<boolean>(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(message.content);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 1500);
-  };
+  //const handleCopy = () => {
+  //  navigator.clipboard.writeText(message.content);
+  //  setIsCopied(true);
+  //  setTimeout(() => setIsCopied(false), 1500);
+  //};
 
   const renderContent = () => {
     return message.parts?.map((part, partIndex) => {
@@ -82,9 +84,11 @@ export default function ChatMessageContent({
             </div>
           );
         }
-
+        
         case "tool-invocation": {
-          const { toolCallId, toolName, state, args, result } = part.toolInvocation as {
+          if (skipToolRendering) return null;
+          
+          const { toolCallId, toolName, state } = part.toolInvocation as {
             toolCallId: string;
             toolName: string;
             state: string;
@@ -111,38 +115,11 @@ export default function ChatMessageContent({
                     Running...
                   </span>
                 </div>
-                {args && Object.keys(args).length > 0 && (
-                  <div className="mt-2 text-sm opacity-80">
-                    <code className="bg-secondary/30 p-2 rounded block overflow-x-auto">
-                      {JSON.stringify(args, null, 2)}
-                    </code>
-                  </div>
-                )}
               </div>
             );
           }
 
-          if (state === "result") {
-            return (
-              <div key={toolCallId} className="my-3 p-4 bg-secondary/20 rounded-lg border border-secondary/30">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium">{toolName}</p>
-                  <span className="px-2 py-0.5 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full">
-                    Completed
-                  </span>
-                </div>
-                <div className="mt-2">
-                  {typeof result === 'object' ? (
-                    <pre className="bg-secondary/20 p-3 rounded text-sm overflow-x-auto">
-                      {JSON.stringify(result, null, 2)}
-                    </pre>
-                  ) : (
-                    <p>{String(result)}</p>
-                  )}
-                </div>
-              </div>
-            );
-          }
+          // We'll skip "result" state rendering, as it's handled by ToolRenderer
           return null;
         }
         default:
@@ -151,39 +128,39 @@ export default function ChatMessageContent({
     });
   };
 
-  const renderActionButtons = () =>
-    showActions && message.role === "assistant" && (
-      <div className="pt-3 flex gap-2 items-center text-muted-foreground">
-        {!isLoading && (
-          <ButtonWithTooltip side="bottom" toolTipText="Copy response">
-            <Button onClick={handleCopy} variant="ghost" size="icon" className="h-8 w-8">
-              {isCopied ? (
-                <CheckIcon className="w-4 h-4 text-green-500" />
-              ) : (
-                <CopyIcon className="w-4 h-4" />
-              )}
-            </Button>
-          </ButtonWithTooltip>
-        )}
-        {!isLoading && isLast && (
-          <ButtonWithTooltip side="bottom" toolTipText="Regenerate response">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => reload()}
-            >
-              <RefreshCcw className="w-4 h-4" />
-            </Button>
-          </ButtonWithTooltip>
-        )}
-      </div>
-    );
+  //const renderActionButtons = () =>
+  //  showActions && message.role === "assistant" && (
+  //    <div className="pt-3 flex gap-2 items-center text-muted-foreground">
+  //      {!isLoading && (
+  //        <ButtonWithTooltip side="bottom" toolTipText="Copy response">
+  //          <Button onClick={handleCopy} variant="ghost" size="icon" className="h-8 w-8">
+  //            {isCopied ? (
+  //              <CheckIcon className="w-4 h-4 text-green-500" />
+  //            ) : (
+  //              <CopyIcon className="w-4 h-4" />
+  //            )}
+  //          </Button>
+  //        </ButtonWithTooltip>
+  //      )}
+  //      {!isLoading && isLast && (
+  //        <ButtonWithTooltip side="bottom" toolTipText="Regenerate response">
+  //          <Button
+  //            variant="ghost"
+  //            size="icon"
+  //            className="h-8 w-8"
+  //            onClick={() => reload()}
+  //          >
+  //            <RefreshCcw className="w-4 h-4" />
+  //          </Button>
+  //        </ButtonWithTooltip>
+  //      )}
+  //    </div>
+  //  );
 
   return (
     <>
       {renderContent()}
-      {renderActionButtons()}
+      {/*{renderActionButtons()}*/}
     </>
   );
 }

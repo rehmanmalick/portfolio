@@ -2,6 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { streamText } from "ai";
 import { SYSTEM_PROMPT } from './prompt';
 import { getWeather } from './tools/getWeather';
+import { getProjects } from './tools/getProjects';
 
 export const maxDuration = 30;
 
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
     messages.unshift(SYSTEM_PROMPT);
 
     const tools = {
-      getWeather
+      getProjects,
     };
 
     const result = streamText({

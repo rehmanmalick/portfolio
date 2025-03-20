@@ -53,44 +53,58 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
       }
     },
   });
-  
+
+
+
   const [loadingSubmit, setLoadingSubmit] = React.useState(false);
 
   // Check for messages to display in the main chat area and above input
   const { displayAIMessages, latestUserMessage } = React.useMemo(() => {
     const latestAIMessageIndex = messages.findLastIndex(m => m.role === 'assistant');
     const latestUserMessageIndex = messages.findLastIndex(m => m.role === 'user');
-    
+
     const result = {
       displayAIMessages: [] as Message[],
       latestUserMessage: latestUserMessageIndex !== -1 ? messages[latestUserMessageIndex] : null
     };
-    
+
     // Only show AI message if it exists AND there's no user message after it
     // This ensures AI message disappears immediately when user sends a new message
     if (latestAIMessageIndex !== -1 && latestAIMessageIndex > latestUserMessageIndex) {
       result.displayAIMessages.push(messages[latestAIMessageIndex]);
     }
-    
+
     return result;
   }, [messages]);
+
+  const hasActiveTool = React.useMemo(() => {
+    return displayAIMessages.some(message => 
+      message.parts?.some(part => 
+        part.type === "tool-invocation" && 
+        part.toolInvocation?.state === "result"
+      )
+    );
+  }, [displayAIMessages]);
 
   const isToolInProgress = messages.some(
     (m: Message) =>
       m.role === "assistant" &&
-      m.toolInvocations?.some((tool) => !("result" in tool))
+      m.parts?.some(part =>
+        part.type === "tool-invocation" &&
+        part.toolInvocation?.state !== "result"
+      )
   );
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!input.trim()) return;
-    
+
     // Clear any existing AI messages immediately when a new message is sent
     const currentMessages = [...messages];
     const newMessages = currentMessages.filter(m => m.role !== 'assistant');
     setMessages(newMessages);
-    
+
     setLoadingSubmit(true);
 
     const requestOptions: ChatRequestOptions = {
@@ -105,43 +119,36 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     setLoadingSubmit(false);
   };
 
+  // In the return section of Chat component:
   return (
-    <div className="flex flex-col w-full max-w-3xl h-screen mx-auto">
-      <div className="flex-1 overflow-hidden flex flex-col">
-        {/* Avatar placeholder - will be replaced with animated Memoji */}
-        <div className="flex justify-center py-6">
-          <div className="w-32 h-32 bg-secondary rounded-full flex items-center justify-center">
-            <span className="text-secondary-foreground">Avatar</span>
-          </div>
+    <div className="grid grid-rows-[auto_1fr_auto] container h-screen max-w-3xl px-2 mx-auto overflow-hidden">
+      {/* Avatar area - will shrink when tool is active */}
+      <div className={`flex justify-center transition-all duration-300 ease-in-out ${hasActiveTool ? 'py-2' : 'py-6'}`}>
+        <div className={`bg-secondary rounded-full flex items-center justify-center transition-all duration-300 ${hasActiveTool ? 'w-16 h-16' : 'w-32 h-32'}`}>
+          <span className="text-secondary-foreground">Avatar</span>
         </div>
-        
-        {/* Main chat area - AI responses only */}
-        <div className="flex-1 overflow-y-auto">
-          <SimpleChatView
-            messages={displayAIMessages}
-            isLoading={isLoading}
-            loadingSubmit={loadingSubmit}
-            reload={async () => {
-              // Remove the last message and reload
-              const updatedMessages = messages.slice(0, -1);
-              setMessages(updatedMessages);
+      </div>
 
-              setLoadingSubmit(true);
-              return reload({
-                body: {},
-              });
-            }}
-            addToolResult={addToolResult}
-          />
-        </div>
-        
-        {/* Fixed user message area above input */}
+      {/* Main content area - flexible height */}
+      <div className="overflow-hidden flex flex-col min-h-0">
+        <SimpleChatView
+          messages={displayAIMessages}
+          isLoading={isLoading}
+          loadingSubmit={loadingSubmit}
+          reload={reload}
+          addToolResult={addToolResult}
+        />
+      </div>
+
+      {/* User message + input area - fixed height */}
+      <div className="flex flex-col">
+        {/* User message bubble */}
         {latestUserMessage && (
           <div className="px-4 py-2">
             <ChatBubble variant="sent">
               <ChatBubbleMessage>
-                <ChatMessageContent 
-                  message={latestUserMessage} 
+                <ChatMessageContent
+                  message={latestUserMessage}
                   isLast={true}
                   isLoading={false}
                   reload={() => Promise.resolve(null)}
@@ -151,7 +158,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
             </ChatBubble>
           </div>
         )}
-        
+
         {/* Input area */}
         <ChatBottombar
           input={input}
@@ -159,9 +166,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
           handleSubmit={onSubmit}
           isLoading={isLoading}
           stop={handleStop}
-          setInput={setInput}
           isToolInProgress={isToolInProgress}
-          isMiddle={false}
         />
       </div>
     </div>

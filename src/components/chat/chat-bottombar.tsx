@@ -1,24 +1,21 @@
+// src/components/chat/chat-bottombar.tsx
 "use client";
 
 import { ChatRequestOptions } from "ai";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, CornerDownLeft, Square } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import React, { useEffect } from "react";
-import { Button } from "../ui/button";
-import { ChatInput } from "../ui/chat/chat-input";
 
 interface ChatBottombarProps {
-  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (
     e: React.FormEvent<HTMLFormElement>,
     chatRequestOptions?: ChatRequestOptions
   ) => void;
   isLoading: boolean;
   stop: () => void;
-  setInput?: React.Dispatch<React.SetStateAction<string>>;
   input: string;
   isToolInProgress: boolean;
-  isMiddle: boolean;
 }
 
 export default function ChatBottombar({
@@ -27,16 +24,13 @@ export default function ChatBottombar({
   handleSubmit,
   isLoading,
   stop,
-  setInput,
   isToolInProgress,
-  isMiddle,
 }: ChatBottombarProps) {
-  const inputRef = React.useRef<HTMLTextAreaElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (
       e.key === "Enter" &&
-      !e.shiftKey &&
       !e.nativeEvent.isComposing &&
       !isToolInProgress &&
       input.trim()
@@ -56,69 +50,43 @@ export default function ChatBottombar({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full items-center relative px-4 py-4"
+      className="w-full px-4 pb-8"
     >
-      <AnimatePresence initial={false}>
-        <form
-          onSubmit={handleSubmit}
-          className="w-full items-center flex flex-col bg-card rounded-xl shadow-md"
-        >
-          <ChatInput
-            value={input}
+      <form
+        onSubmit={handleSubmit}
+        className="relative w-full"
+      >
+        <div className="flex items-center max-w-xl mx-auto pl-6 pr-2 py-2 bg-[#ECECF0] rounded-full border border-[#E5E5E9]">
+          <input
             ref={inputRef}
-            onKeyDown={handleKeyPress}
+            type="text"
+            value={input}
             onChange={handleInputChange}
-            name="message"
+            onKeyDown={handleKeyPress}
             placeholder={
               isToolInProgress
                 ? "Tool is in progress..."
                 : "Ask me anything about myself, my skills, or my projects"
             }
-            className="resize-none border-none max-h-40 px-6 pt-4 shadow-none rounded-t-xl text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed"
-            disabled={isToolInProgress}
+            className="w-full bg-transparent border-none text-black text-md focus:outline-none placeholder:text-gray-500"
+            disabled={isToolInProgress || isLoading}
           />
-
-          <div className="flex w-full items-center justify-between bg-card rounded-b-xl">
-            {isLoading ? (
-              <div className="flex w-full justify-end p-3">
-                <Button
-                  className="rounded-full bg-black hover:opacity-80 hover:bg-black"
-                  size="icon"
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    stop();
-                  }}
-                >
-                  <Square className="w-4 h-4" strokeWidth={2.75} />
-                </Button>
-              </div>
-            ) : (
-              <div className="flex w-full justify-between items-center p-3">
-                {/* Enter Shortcut Hint */}
-                <span className="text-xs text-muted-foreground pl-3 py-1 rounded-lg flex items-center gap-1">
-                  <span>Press <span className="font-semibold">Enter</span> to send</span>
-                  <CornerDownLeft className="w-3 h-3" />
-                </span>
-
-                {/* Send button */}
-                <Button
-                  className="rounded-full bg-black hover:opacity-80 hover:bg-black"
-                  size="icon"
-                  type="submit"
-                  disabled={
-                    isLoading ||
-                    !input.trim() ||
-                    isToolInProgress
-                  }
-                >
-                  <ArrowUp className="w-4 h-4" strokeWidth={2.75} />
-                </Button>
-              </div>
-            )}
-          </div>
-        </form>
-      </AnimatePresence>
+          
+          <button
+            type="submit"
+            disabled={isLoading || !input.trim() || isToolInProgress}
+            className="flex items-center justify-center p-2 rounded-full bg-[#0171E3] text-white disabled:opacity-50"
+            onClick={(e) => {
+              if (isLoading) {
+                e.preventDefault();
+                stop();
+              }
+            }}
+          >
+            <ArrowRight className="w-6 h-6" />
+          </button>
+        </div>
+      </form>
     </motion.div>
   );
 }
