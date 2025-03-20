@@ -11,7 +11,7 @@ const chatBubbleVariant = cva(
   {
     variants: {
       variant: {
-        received: "self-start",
+        received: "self-start bg-yellow-200",
         sent: "self-end flex-row-reverse",
       },
       layout: {
