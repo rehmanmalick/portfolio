@@ -14,6 +14,7 @@ import {
   ChatBubble,
   ChatBubbleMessage,
 } from '@/components/ui/chat/chat-bubble';
+import Helper from '@/components/chat/helper';
 
 export interface ChatProps {
   id?: string;
@@ -176,8 +177,10 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
       </div>
 
       {/* User message + input area - fixed height */}
-      <div className="flex flex-col bg-amber-200">
+      <div className="flex flex-col items-center gap-2">
         {/* Input area */}
+        <Helper setInput={setInput} />
+
         <ChatBottombar
           input={input}
           handleInputChange={handleInputChange}
