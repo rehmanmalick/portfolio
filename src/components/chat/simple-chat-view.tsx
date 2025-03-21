@@ -53,7 +53,7 @@ export default function SimpleChatView({
   };
 
   return (
-    <div className="w-full flex flex-col min-h-0 overflow-hidden">
+    <div className="w-full flex flex-col px-4 min-h-0 overflow-hidden">
       {messages.map((message, index) => {
         if (message.role !== "assistant") return null;
 

@@ -1,16 +1,19 @@
-"use client";
+'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { ChatRequestOptions } from "ai";
-import { Message } from "ai/react";
-import React from "react";
-import { toast } from "sonner";
+import { ChatRequestOptions } from 'ai';
+import { Message } from 'ai/react';
+import React from 'react';
+import { toast } from 'sonner';
 
-import ChatBottombar from "@/components/chat/chat-bottombar";
-import SimpleChatView from "@/components/chat/simple-chat-view";
+import ChatBottombar from '@/components/chat/chat-bottombar';
+import SimpleChatView from '@/components/chat/simple-chat-view';
 
-import ChatMessageContent from "@/components/chat/chat-message-content";
-import { ChatBubble, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
+import ChatMessageContent from '@/components/chat/chat-message-content';
+import {
+  ChatBubble,
+  ChatBubbleMessage,
+} from '@/components/ui/chat/chat-bubble';
 
 export interface ChatProps {
   id?: string;
@@ -42,7 +45,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     },
     onError: (error) => {
       setLoadingSubmit(false);
-      console.error("Chat error:", error.message, error.cause);
+      console.error('Chat error:', error.message, error.cause);
       toast.error(`Error: ${error.message}`);
     },
     onToolCall: (tool) => {
@@ -54,23 +57,29 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     },
   });
 
-
-
   const [loadingSubmit, setLoadingSubmit] = React.useState(false);
 
   // Check for messages to display in the main chat area and above input
   const { displayAIMessages, latestUserMessage } = React.useMemo(() => {
-    const latestAIMessageIndex = messages.findLastIndex(m => m.role === 'assistant');
-    const latestUserMessageIndex = messages.findLastIndex(m => m.role === 'user');
+    const latestAIMessageIndex = messages.findLastIndex(
+      (m) => m.role === 'assistant'
+    );
+    const latestUserMessageIndex = messages.findLastIndex(
+      (m) => m.role === 'user'
+    );
 
     const result = {
       displayAIMessages: [] as Message[],
-      latestUserMessage: latestUserMessageIndex !== -1 ? messages[latestUserMessageIndex] : null
+      latestUserMessage:
+        latestUserMessageIndex !== -1 ? messages[latestUserMessageIndex] : null,
     };
 
     // Only show AI message if it exists AND there's no user message after it
     // This ensures AI message disappears immediately when user sends a new message
-    if (latestAIMessageIndex !== -1 && latestAIMessageIndex > latestUserMessageIndex) {
+    if (
+      latestAIMessageIndex !== -1 &&
+      latestAIMessageIndex > latestUserMessageIndex
+    ) {
       result.displayAIMessages.push(messages[latestAIMessageIndex]);
     }
 
@@ -78,20 +87,22 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
   }, [messages]);
 
   const hasActiveTool = React.useMemo(() => {
-    return displayAIMessages.some(message => 
-      message.parts?.some(part => 
-        part.type === "tool-invocation" && 
-        part.toolInvocation?.state === "result"
+    return displayAIMessages.some((message) =>
+      message.parts?.some(
+        (part) =>
+          part.type === 'tool-invocation' &&
+          part.toolInvocation?.state === 'result'
       )
     );
   }, [displayAIMessages]);
 
   const isToolInProgress = messages.some(
     (m: Message) =>
-      m.role === "assistant" &&
-      m.parts?.some(part =>
-        part.type === "tool-invocation" &&
-        part.toolInvocation?.state !== "result"
+      m.role === 'assistant' &&
+      m.parts?.some(
+        (part) =>
+          part.type === 'tool-invocation' &&
+          part.toolInvocation?.state !== 'result'
       )
   );
 
@@ -102,7 +113,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
 
     // Clear any existing AI messages immediately when a new message is sent
     const currentMessages = [...messages];
-    const newMessages = currentMessages.filter(m => m.role !== 'assistant');
+    const newMessages = currentMessages.filter((m) => m.role !== 'assistant');
     setMessages(newMessages);
 
     setLoadingSubmit(true);
@@ -121,30 +132,23 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
 
   // In the return section of Chat component:
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] container h-screen max-w-3xl px-2 mx-auto overflow-hidden">
+    <div className="container mx-auto grid h-screen max-w-3xl grid-rows-[auto_1fr_auto] overflow-hidden px-2">
       {/* Avatar area - will shrink when tool is active */}
-      <div className={`flex justify-center transition-all duration-300 ease-in-out ${hasActiveTool ? 'py-2' : 'py-6'}`}>
-        <div className={`bg-secondary rounded-full flex items-center justify-center transition-all duration-300 ${hasActiveTool ? 'w-16 h-16' : 'w-32 h-32'}`}>
-          <span className="text-secondary-foreground">Avatar</span>
+
+      <div className={`${hasActiveTool ? 'pt-2' : 'py-6'}`}>
+        <div
+          className={`flex justify-center transition-all duration-300 ease-in-out`}
+        >
+          <div
+            className={`bg-secondary flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-16 w-16' : 'h-32 w-32'}`}
+          >
+            <span className="text-secondary-foreground">Avatar</span>
+          </div>
         </div>
-      </div>
 
-      {/* Main content area - flexible height */}
-      <div className="overflow-hidden flex flex-col min-h-0">
-        <SimpleChatView
-          messages={displayAIMessages}
-          isLoading={isLoading}
-          loadingSubmit={loadingSubmit}
-          reload={reload}
-          addToolResult={addToolResult}
-        />
-      </div>
-
-      {/* User message + input area - fixed height */}
-      <div className="flex flex-col">
         {/* User message bubble */}
         {latestUserMessage && (
-          <div className="px-4 py-2">
+          <div className="flex px-4 pt-4">
             <ChatBubble variant="sent">
               <ChatBubbleMessage>
                 <ChatMessageContent
@@ -158,7 +162,21 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
             </ChatBubble>
           </div>
         )}
+      </div>
 
+      {/* Main content area - flexible height */}
+      <div className="flex min-h-0 flex-col overflow-hidden">
+        <SimpleChatView
+          messages={displayAIMessages}
+          isLoading={isLoading}
+          loadingSubmit={loadingSubmit}
+          reload={reload}
+          addToolResult={addToolResult}
+        />
+      </div>
+
+      {/* User message + input area - fixed height */}
+      <div className="flex flex-col bg-amber-200">
         {/* Input area */}
         <ChatBottombar
           input={input}

@@ -56,7 +56,7 @@ export default function ChatBottombar({
         onSubmit={handleSubmit}
         className="relative w-full"
       >
-        <div className="flex items-center max-w-xl mx-auto pl-6 pr-2 py-2 bg-[#ECECF0] rounded-full border border-[#E5E5E9]">
+        <div className="flex items-center mx-auto pl-6 pr-2 py-2 bg-[#ECECF0] rounded-full border border-[#E5E5E9]">
           <input
             ref={inputRef}
             type="text"

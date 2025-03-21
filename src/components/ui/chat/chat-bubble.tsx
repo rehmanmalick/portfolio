@@ -7,12 +7,12 @@ import MessageLoading from "./message-loading";
 
 // ChatBubble
 const chatBubbleVariant = cva(
-  "flex gap-2 w-full items-start relative group",
+  "flex gap-2 items-start relative group",
   {
     variants: {
       variant: {
-        received: "self-start",
-        sent: "self-end flex-row-reverse",
+        received: "self-start w-full",
+        sent: "self-center flex-row-reverse mx-auto",
       },
       layout: {
         default: "",
@@ -87,7 +87,7 @@ const chatBubbleMessageVariants = cva("", {
     variant: {
       received:
         "text-secondary-foreground rounded-lg py-2",
-      sent: "p-2 px-5 bg-secondary text-secondary-foreground rounded-3xl",
+      sent: "p-2 px-5 bg-[#007AFF] text-primary-foreground rounded-3xl",
     },
     layout: {
       default: "",
