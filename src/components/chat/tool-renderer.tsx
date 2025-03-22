@@ -1,47 +1,81 @@
 // src/components/chat/tool-renderer.tsx
-import { Presentation } from "../presentation";
-import AllProjects from "../projects/AllProjects";
+import { Contact } from '../contact';
+import { Presentation } from '../presentation';
+import AllProjects from '../projects/AllProjects';
+import Resume from '../resume';
 
 interface ToolRendererProps {
   toolInvocations: any[];
   messageId: string;
 }
 
-export default function ToolRenderer({ toolInvocations, messageId }: ToolRendererProps) {
+export default function ToolRenderer({
+  toolInvocations,
+  messageId,
+}: ToolRendererProps) {
   return (
-    <div className="w-full overflow-hidden transition-all duration-300">
+    <div className="w-full py-5 transition-all duration-300">
       {toolInvocations.map((tool) => {
         const { toolCallId, toolName } = tool;
 
         // Return specialized components based on tool name
         switch (toolName) {
-          case "getProjects":
+          case 'getProjects':
             return (
-              <div key={toolCallId} className="w-full overflow-hidden">
+              <div
+                key={toolCallId}
+                className="w-full overflow-hidden rounded-lg"
+              >
                 <AllProjects />
               </div>
             );
 
-          case "getPresentation":
+          case 'getPresentation':
             return (
-              <div key={toolCallId} className="w-full border">
+              <div
+                key={toolCallId}
+                className="w-full overflow-hidden rounded-lg"
+              >
                 <Presentation />
+              </div>
+            );
+
+          case 'getResume':
+            return (
+              <div
+                key={toolCallId}
+                className="w-full rounded-lg p-4"
+              >
+                <Resume />
+              </div>
+            );
+        
+            case 'getContact':
+            return (
+              <div
+                key={toolCallId}
+                className="w-full rounded-lg"
+              >
+                <Contact />
               </div>
             );
 
           // Default renderer for other tools
           default:
             return (
-              <div key={toolCallId} className="w-full p-4 bg-secondary/10 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
+              <div
+                key={toolCallId}
+                className="bg-secondary/10 w-full rounded-lg p-4"
+              >
+                <div className="mb-2 flex items-center justify-between">
                   <h3 className="text-lg font-medium">{toolName}</h3>
-                  <span className="px-2 py-0.5 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full">
+                  <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800 dark:bg-green-900 dark:text-green-100">
                     Tool Result
                   </span>
                 </div>
                 <div className="mt-2">
                   {typeof tool.result === 'object' ? (
-                    <pre className="bg-secondary/20 p-3 rounded text-sm overflow-x-auto">
+                    <pre className="bg-secondary/20 overflow-x-auto rounded p-3 text-sm">
                       {JSON.stringify(tool.result, null, 2)}
                     </pre>
                   ) : (

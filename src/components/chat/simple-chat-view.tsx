@@ -57,61 +57,40 @@ export function SimplifiedChatView({
   const hasTools = currentTool.length > 0;
 
   return (
-    <div className="flex h-full w-full flex-col gap-4 px-4">
-      {/* Content container with better height distribution */}
-      <div className="flex h-full w-full flex-col gap-4">
-        {/* Tool invocation result - only the first one is displayed */}
+    <motion.div {...MOTION_CONFIG} className="flex h-full w-full flex-col px-4">
+      {/* Single scrollable container for both tool and text content */}
+      <div className="custom-scrollbar flex h-full w-full flex-col overflow-y-auto">
+        {/* Tool invocation result - displayed at the top */}
         {hasTools && (
-          <motion.div
-            {...MOTION_CONFIG}
-            className="w-full"
-            style={{
-              flex: hasTextContent ? '0 0 auto' : '1 0 auto',
-              maxHeight: hasTextContent ? '80%' : '100%',
-            }}
-          >
+          <div className="mb-4 w-full">
             <ToolRenderer
               toolInvocations={currentTool}
               messageId={message.id || 'current-msg'}
             />
-
-          </motion.div>
+          </div>
         )}
 
-        {/* Text content with custom minimal scrollbar */}
+        {/* Text content */}
         {hasTextContent && (
-          <motion.div
-            {...MOTION_CONFIG}
-            className="w-full"
-            style={{
-              flex: '1 1 auto',
-              minHeight: hasTools ? '80px' : 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div
-              className="custom-scrollbar w-full flex-1 overflow-y-auto"
-              style={{
-                maxHeight: hasTools ? '40vh' : 'min(500px, 60vh)',
-              }}
-            >
-              <ChatBubble variant="received" className="w-full">
-                <ChatBubbleMessage className="w-full">
-                  <ChatMessageContent
-                    message={message}
-                    isLast={true}
-                    isLoading={isLoading}
-                    reload={reload}
-                    addToolResult={addToolResult}
-                    skipToolRendering={true}
-                  />
-                </ChatBubbleMessage>
-              </ChatBubble>
-            </div>
-          </motion.div>
+          <div className="w-full">
+            <ChatBubble variant="received" className="w-full">
+              <ChatBubbleMessage className="w-full">
+                <ChatMessageContent
+                  message={message}
+                  isLast={true}
+                  isLoading={isLoading}
+                  reload={reload}
+                  addToolResult={addToolResult}
+                  skipToolRendering={true}
+                />
+              </ChatBubbleMessage>
+            </ChatBubble>
+          </div>
         )}
+
+        {/* Add some padding at the bottom for better scrolling experience */}
+        <div className="pb-4"></div>
       </div>
-    </div>
+    </motion.div>
   );
 }
