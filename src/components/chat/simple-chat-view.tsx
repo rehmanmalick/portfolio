@@ -1,19 +1,19 @@
-// src/components/chat/simple-chat-view.tsx
-import { ChatRequestOptions } from "ai";
-import { Message } from "ai/react";
-import { motion } from "framer-motion";
-import { useState } from "react";
+'use client';
+
+import { Message } from 'ai/react';
+import { motion } from 'framer-motion';
+import { ChatRequestOptions } from 'ai';
 import {
   ChatBubble,
   ChatBubbleMessage,
-} from "../ui/chat/chat-bubble";
-import ChatMessageContent from "./chat-message-content";
-import ToolRenderer from "./tool-renderer";
+} from '@/components/ui/chat/chat-bubble';
+import ChatMessageContent from './chat-message-content';
+import ToolRenderer from './tool-renderer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-interface SimpleChatViewProps {
-  messages: Message[];
+interface SimplifiedChatViewProps {
+  message: Message;
   isLoading: boolean;
-  loadingSubmit?: boolean;
   reload: (
     chatRequestOptions?: ChatRequestOptions
   ) => Promise<string | null | undefined>;
@@ -26,113 +26,75 @@ const MOTION_CONFIG = {
   exit: { opacity: 0, y: 20 },
   transition: {
     duration: 0.3,
-    ease: "easeOut"
+    ease: 'easeOut',
   },
 };
 
-export default function SimpleChatView({
-  messages,
+export function SimplifiedChatView({
+  message,
   isLoading,
-  loadingSubmit,
   reload,
   addToolResult,
-}: SimpleChatViewProps) {
-  // Keep track of which messages have expanded text
-  const [expandedMessageIds, setExpandedMessageIds] = useState<Set<string>>(new Set());
+}: SimplifiedChatViewProps) {
+  if (message.role !== 'assistant') return null;
 
-  const toggleMessageExpansion = (messageId: string) => {
-    setExpandedMessageIds(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(messageId)) {
-        newSet.delete(messageId);
-      } else {
-        newSet.add(messageId);
-      }
-      return newSet;
-    });
-  };
+  // Extract tool invocations that are in "result" state
+  const toolInvocations =
+    message.parts
+      ?.filter(
+        (part) =>
+          part.type === 'tool-invocation' &&
+          part.toolInvocation?.state === 'result'
+      )
+      .map((part) =>
+        part.type === 'tool-invocation' ? part.toolInvocation : null
+      )
+      .filter(Boolean) || [];
+
+  const hasTextContent = message.content.trim().length > 0;
+  const hasTools = toolInvocations.length > 0;
 
   return (
-    <div className="w-full flex flex-col px-4 min-h-0 overflow-hidden">
-      {messages.map((message, index) => {
-        if (message.role !== "assistant") return null;
+    <div className="flex w-full flex-col px-4 gap-2">
+      {/* Tool invocation results - displayed at the top */}
+      {hasTools && (
+        <motion.div
+          {...MOTION_CONFIG}
+          className="w-full transition-all duration-300 ease-in-out"
+          style={{ flex: hasTextContent ? '0 0 60%' : '1 0 auto' }}
+        >
+          <ToolRenderer
+            toolInvocations={toolInvocations}
+            messageId={message.id || 'current-msg'}
+          />
+        </motion.div>
+      )}
 
-        // Extract tool invocations that are in "result" state
-        const toolInvocations = message.parts
-          ?.filter(part =>
-            part.type === "tool-invocation" &&
-            part.toolInvocation?.state === "result"
-          )
-          .map(part => part.type === "tool-invocation" ? part.toolInvocation : null)
-          .filter(Boolean) || [];
-
-        // Check if message has text content without tool invocations
-        const hasTextContent = message.content.trim().length > 0;
-        const hasTools = toolInvocations.length > 0;
-        const messageId = message.id || `msg-${index}`;
-        const isExpanded = expandedMessageIds.has(messageId);
-
-        return (
-          <div key={messageId} className="flex flex-col min-h-0 w-full gap-2">
-            {/* Tool invocation results - rendered outside chat bubbles */}
-            {hasTools && (
-              <motion.div
-                {...MOTION_CONFIG}
-                className={`w-full transition-all duration-300 ease-in-out ${hasTextContent && !isExpanded ? 'flex-grow' : 'flex-none'
-                  }`}
-              >
-                <ToolRenderer
-                  toolInvocations={toolInvocations}
-                  messageId={messageId}
-                />
-              </motion.div>
-            )}
-
-            {/* Regular text message content - collapsible when tools are present */}
-            {hasTextContent && (
-              <div
-                className={`relative w-full transition-all duration-300 ease-in-out overflow-y-auto ${hasTools && !isExpanded ? 'max-h-36' : 'max-h-[500px]'
-                  }`}
-              >
-                <motion.div
-                  {...MOTION_CONFIG}
-                >
-                  <ChatBubble variant="received">
-                    <ChatBubbleMessage>
-                      <ChatMessageContent
-                        message={message}
-                        isLast={index === messages.length - 1}
-                        isLoading={isLoading}
-                        reload={reload}
-                        addToolResult={addToolResult}
-                        skipToolRendering={true}
-                      />
-                    </ChatBubbleMessage>
-                  </ChatBubble>
-                </motion.div>
-
-                {/* Expand/collapse button overlay for text when tools are present */}
-                {hasTools && (
-                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent flex justify-center items-end">
-                    <button
-                      onClick={() => toggleMessageExpansion(messageId)}
-                      className="text-xs text-muted-foreground hover:text-foreground p-1 rounded-md mb-1 bg-secondary/20 px-3 py-1"
-                    >
-                      {isExpanded ? 'Show less ↑' : 'Show more ↓'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      {loadingSubmit && (
-        <motion.div {...MOTION_CONFIG} className="px-4">
-          <ChatBubble variant="received">
-            <ChatBubbleMessage isLoading />
-          </ChatBubble>
+      {/* Text content in a ScrollArea for overflow */}
+      {hasTextContent && (
+        <motion.div
+          {...MOTION_CONFIG}
+          className="w-full transition-all duration-300 ease-in-out"
+          style={{ flex: hasTools ? '0 0 40%' : '1 0 auto' }}
+        >
+          <ScrollArea 
+            className={`rounded-lg pr-2 ${hasTools ? 'h-[200px]' : 'max-h-[500px]'}`}
+          >
+            <div className="pb-2">
+              <ChatBubble variant="received">
+                <ChatBubbleMessage>
+                  <ChatMessageContent
+                    message={message}
+                    isLast={true}
+                    isLoading={isLoading}
+                    reload={reload}
+                    addToolResult={addToolResult}
+                    skipToolRendering={true}
+                  />
+                </ChatBubbleMessage>
+              </ChatBubble>
+            </div>
+          </ScrollArea>
         </motion.div>
       )}
     </div>

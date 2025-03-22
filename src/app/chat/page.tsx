@@ -3,23 +3,33 @@
 import { useChat } from '@ai-sdk/react';
 import { ChatRequestOptions } from 'ai';
 import { Message } from 'ai/react';
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { toast } from 'sonner';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import ChatBottombar from '@/components/chat/chat-bottombar';
-import SimpleChatView from '@/components/chat/simple-chat-view';
-
 import ChatMessageContent from '@/components/chat/chat-message-content';
 import {
   ChatBubble,
   ChatBubbleMessage,
 } from '@/components/ui/chat/chat-bubble';
 import Helper from '@/components/chat/helper';
+import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
 
 export interface ChatProps {
   id?: string;
   initialMessages?: Message[] | [];
 }
+
+const MOTION_CONFIG = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 20 },
+  transition: {
+    duration: 0.3,
+    ease: "easeOut"
+  },
+};
 
 export default function Chat({ initialMessages = [], id }: ChatProps) {
   const {
@@ -58,10 +68,10 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     },
   });
 
-  const [loadingSubmit, setLoadingSubmit] = React.useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
-  // Check for messages to display in the main chat area and above input
-  const { displayAIMessages, latestUserMessage } = React.useMemo(() => {
+  // Get only the most recent messages to display
+  const { currentAIMessage, latestUserMessage, hasActiveTool } = useMemo(() => {
     const latestAIMessageIndex = messages.findLastIndex(
       (m) => m.role === 'assistant'
     );
@@ -70,32 +80,28 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     );
 
     const result = {
-      displayAIMessages: [] as Message[],
+      currentAIMessage: latestAIMessageIndex !== -1 ? messages[latestAIMessageIndex] : null,
       latestUserMessage:
         latestUserMessageIndex !== -1 ? messages[latestUserMessageIndex] : null,
+      hasActiveTool: false,
     };
 
+    // Check if the latest AI message has any active tools
+    if (result.currentAIMessage) {
+      result.hasActiveTool = result.currentAIMessage.parts?.some(
+        (part) =>
+          part.type === 'tool-invocation' &&
+          part.toolInvocation?.state === 'result'
+      ) || false;
+    }
+
     // Only show AI message if it exists AND there's no user message after it
-    // This ensures AI message disappears immediately when user sends a new message
-    if (
-      latestAIMessageIndex !== -1 &&
-      latestAIMessageIndex > latestUserMessageIndex
-    ) {
-      result.displayAIMessages.push(messages[latestAIMessageIndex]);
+    if (latestAIMessageIndex < latestUserMessageIndex) {
+      result.currentAIMessage = null;
     }
 
     return result;
   }, [messages]);
-
-  const hasActiveTool = React.useMemo(() => {
-    return displayAIMessages.some((message) =>
-      message.parts?.some(
-        (part) =>
-          part.type === 'tool-invocation' &&
-          part.toolInvocation?.state === 'result'
-      )
-    );
-  }, [displayAIMessages]);
 
   const isToolInProgress = messages.some(
     (m: Message) =>
@@ -110,7 +116,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!input.trim()) return;
+    if (!input.trim() || isToolInProgress) return;
 
     // Clear any existing AI messages immediately when a new message is sent
     const currentMessages = [...messages];
@@ -131,15 +137,11 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     setLoadingSubmit(false);
   };
 
-  // In the return section of Chat component:
   return (
     <div className="container mx-auto grid h-screen max-w-3xl grid-rows-[auto_1fr_auto] overflow-hidden px-2">
-      {/* Avatar area - will shrink when tool is active */}
-
-      <div className={`${hasActiveTool ? 'pt-2' : 'py-6'}`}>
-        <div
-          className={`flex justify-center transition-all duration-300 ease-in-out`}
-        >
+      {/* Avatar area - dynamic sizing based on tool status */}
+      <div className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-2 pb-0' : 'py-6'}`}>
+        <div className="flex justify-center">
           <div
             className={`bg-secondary flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-16 w-16' : 'h-32 w-32'}`}
           >
@@ -147,40 +149,60 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
           </div>
         </div>
 
-        {/* User message bubble */}
-        {latestUserMessage && (
-          <div className="flex px-4 pt-4">
-            <ChatBubble variant="sent">
-              <ChatBubbleMessage>
-                <ChatMessageContent
-                  message={latestUserMessage}
-                  isLast={true}
-                  isLoading={false}
-                  reload={() => Promise.resolve(null)}
-                  showActions={false}
-                />
-              </ChatBubbleMessage>
-            </ChatBubble>
-          </div>
-        )}
+        {/* User message bubble - only shown when waiting for AI response */}
+        <AnimatePresence>
+          {latestUserMessage && !currentAIMessage && (
+            <motion.div 
+              {...MOTION_CONFIG}
+              className="flex px-4 pt-4"
+            >
+              <ChatBubble variant="sent">
+                <ChatBubbleMessage>
+                  <ChatMessageContent
+                    message={latestUserMessage}
+                    isLast={true}
+                    isLoading={false}
+                    reload={() => Promise.resolve(null)}
+                    showActions={false}
+                  />
+                </ChatBubbleMessage>
+              </ChatBubble>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Main content area - flexible height */}
-      <div className="flex min-h-0 flex-col overflow-hidden">
-        <SimpleChatView
-          messages={displayAIMessages}
-          isLoading={isLoading}
-          loadingSubmit={loadingSubmit}
-          reload={reload}
-          addToolResult={addToolResult}
-        />
+      <div className="flex min-h-0 flex-col overflow-hidden flex-1">
+        <AnimatePresence mode="wait">
+          {currentAIMessage ? (
+            <div className="flex-1 min-h-0 flex flex-col">
+              <SimplifiedChatView
+                message={currentAIMessage}
+                isLoading={isLoading}
+                reload={reload}
+                addToolResult={addToolResult}
+              />
+            </div>
+          ) : (
+            loadingSubmit && (
+              <motion.div 
+                key="loading"
+                {...MOTION_CONFIG} 
+                className="px-4"
+              >
+                <ChatBubble variant="received">
+                  <ChatBubbleMessage isLoading />
+                </ChatBubble>
+              </motion.div>
+            )
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* User message + input area - fixed height */}
+      {/* Input area - fixed height */}
       <div className="flex flex-col items-center gap-2">
-        {/* Input area */}
         <Helper setInput={setInput} />
-
         <ChatBottombar
           input={input}
           handleInputChange={handleInputChange}
