@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       messages,
       toolCallStreaming: true,
       tools,
-      maxSteps: 5,
+      maxSteps: 2,
     });
 
     // Pass the error handler to surface any errors in the stream response

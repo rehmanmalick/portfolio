@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/chat/chat-bubble';
 import ChatMessageContent from './chat-message-content';
 import ToolRenderer from './tool-renderer';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface SimplifiedChatViewProps {
   message: Message;
@@ -51,38 +50,54 @@ export function SimplifiedChatView({
       )
       .filter(Boolean) || [];
 
+  // Only display the first tool (if any)
+  const currentTool = toolInvocations.length > 0 ? [toolInvocations[0]] : [];
+
   const hasTextContent = message.content.trim().length > 0;
-  const hasTools = toolInvocations.length > 0;
+  const hasTools = currentTool.length > 0;
 
   return (
-    <div className="flex w-full flex-col px-4 gap-2">
-      {/* Tool invocation results - displayed at the top */}
-      {hasTools && (
-        <motion.div
-          {...MOTION_CONFIG}
-          className="w-full transition-all duration-300 ease-in-out"
-          style={{ flex: hasTextContent ? '0 0 60%' : '1 0 auto' }}
-        >
-          <ToolRenderer
-            toolInvocations={toolInvocations}
-            messageId={message.id || 'current-msg'}
-          />
-        </motion.div>
-      )}
-
-      {/* Text content in a ScrollArea for overflow */}
-      {hasTextContent && (
-        <motion.div
-          {...MOTION_CONFIG}
-          className="w-full transition-all duration-300 ease-in-out"
-          style={{ flex: hasTools ? '0 0 40%' : '1 0 auto' }}
-        >
-          <ScrollArea 
-            className={`rounded-lg pr-2 ${hasTools ? 'h-[200px]' : 'max-h-[500px]'}`}
+    <div className="flex h-full w-full flex-col gap-4 px-4">
+      {/* Content container with better height distribution */}
+      <div className="flex h-full w-full flex-col gap-4">
+        {/* Tool invocation result - only the first one is displayed */}
+        {hasTools && (
+          <motion.div
+            {...MOTION_CONFIG}
+            className="w-full"
+            style={{
+              flex: hasTextContent ? '0 0 auto' : '1 0 auto',
+              maxHeight: hasTextContent ? '80%' : '100%',
+            }}
           >
-            <div className="pb-2">
-              <ChatBubble variant="received">
-                <ChatBubbleMessage>
+            <ToolRenderer
+              toolInvocations={currentTool}
+              messageId={message.id || 'current-msg'}
+            />
+
+          </motion.div>
+        )}
+
+        {/* Text content with custom minimal scrollbar */}
+        {hasTextContent && (
+          <motion.div
+            {...MOTION_CONFIG}
+            className="w-full"
+            style={{
+              flex: '1 1 auto',
+              minHeight: hasTools ? '80px' : 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div
+              className="custom-scrollbar w-full flex-1 overflow-y-auto"
+              style={{
+                maxHeight: hasTools ? '40vh' : 'min(500px, 60vh)',
+              }}
+            >
+              <ChatBubble variant="received" className="w-full">
+                <ChatBubbleMessage className="w-full">
                   <ChatMessageContent
                     message={message}
                     isLast={true}
@@ -94,9 +109,9 @@ export function SimplifiedChatView({
                 </ChatBubbleMessage>
               </ChatBubble>
             </div>
-          </ScrollArea>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

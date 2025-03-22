@@ -27,7 +27,7 @@ const MOTION_CONFIG = {
   exit: { opacity: 0, y: 20 },
   transition: {
     duration: 0.3,
-    ease: "easeOut"
+    ease: 'easeOut',
   },
 };
 
@@ -80,7 +80,8 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     );
 
     const result = {
-      currentAIMessage: latestAIMessageIndex !== -1 ? messages[latestAIMessageIndex] : null,
+      currentAIMessage:
+        latestAIMessageIndex !== -1 ? messages[latestAIMessageIndex] : null,
       latestUserMessage:
         latestUserMessageIndex !== -1 ? messages[latestUserMessageIndex] : null,
       hasActiveTool: false,
@@ -88,11 +89,12 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
 
     // Check if the latest AI message has any active tools
     if (result.currentAIMessage) {
-      result.hasActiveTool = result.currentAIMessage.parts?.some(
-        (part) =>
-          part.type === 'tool-invocation' &&
-          part.toolInvocation?.state === 'result'
-      ) || false;
+      result.hasActiveTool =
+        result.currentAIMessage.parts?.some(
+          (part) =>
+            part.type === 'tool-invocation' &&
+            part.toolInvocation?.state === 'result'
+        ) || false;
     }
 
     // Only show AI message if it exists AND there's no user message after it
@@ -140,7 +142,9 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
   return (
     <div className="container mx-auto grid h-screen max-w-3xl grid-rows-[auto_1fr_auto] overflow-hidden px-2">
       {/* Avatar area - dynamic sizing based on tool status */}
-      <div className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-2 pb-0' : 'py-6'}`}>
+      <div
+        className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-2 pb-0' : 'py-6'}`}
+      >
         <div className="flex justify-center">
           <div
             className={`bg-secondary flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-16 w-16' : 'h-32 w-32'}`}
@@ -152,10 +156,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
         {/* User message bubble - only shown when waiting for AI response */}
         <AnimatePresence>
           {latestUserMessage && !currentAIMessage && (
-            <motion.div 
-              {...MOTION_CONFIG}
-              className="flex px-4 pt-4"
-            >
+            <motion.div {...MOTION_CONFIG} className="flex px-4 pt-4">
               <ChatBubble variant="sent">
                 <ChatBubbleMessage>
                   <ChatMessageContent
@@ -163,7 +164,6 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
                     isLast={true}
                     isLoading={false}
                     reload={() => Promise.resolve(null)}
-                    showActions={false}
                   />
                 </ChatBubbleMessage>
               </ChatBubble>
@@ -173,10 +173,10 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
       </div>
 
       {/* Main content area - flexible height */}
-      <div className="flex min-h-0 flex-col overflow-hidden flex-1">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <AnimatePresence mode="wait">
           {currentAIMessage ? (
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex min-h-0 flex-1 flex-col">
               <SimplifiedChatView
                 message={currentAIMessage}
                 isLoading={isLoading}
@@ -186,11 +186,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
             </div>
           ) : (
             loadingSubmit && (
-              <motion.div 
-                key="loading"
-                {...MOTION_CONFIG} 
-                className="px-4"
-              >
+              <motion.div key="loading" {...MOTION_CONFIG} className="px-4">
                 <ChatBubble variant="received">
                   <ChatBubbleMessage isLoading />
                 </ChatBubble>
@@ -201,7 +197,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
       </div>
 
       {/* Input area - fixed height */}
-      <div className="flex flex-col items-center gap-2">
+      <div className="mt-auto flex flex-col items-center gap-2">
         <Helper setInput={setInput} />
         <ChatBottombar
           input={input}
