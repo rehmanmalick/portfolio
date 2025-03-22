@@ -1,9 +1,9 @@
 // src/components/chat/tool-renderer.tsx
-import { motion } from "framer-motion";
+import { Presentation } from "../presentation";
 import AllProjects from "../projects/AllProjects";
 
 interface ToolRendererProps {
-  toolInvocations: any[]; // Replace with actual type from your AI SDK
+  toolInvocations: any[];
   messageId: string;
 }
 
@@ -22,22 +22,10 @@ export default function ToolRenderer({ toolInvocations, messageId }: ToolRendere
               </div>
             );
 
-          // Add more tool-specific renderers as needed
-          case "getResume":
+          case "getPresentation":
             return (
-              <div key={toolCallId} className="w-full p-4 bg-secondary/10 rounded-lg">
-                <h3 className="text-lg font-medium mb-2">My Resume</h3>
-                {/* Resume component would go here */}
-                <p>Resume content...</p>
-              </div>
-            );
-
-          case "getContact":
-            return (
-              <div key={toolCallId} className="w-full p-4 bg-secondary/10 rounded-lg">
-                <h3 className="text-lg font-medium mb-2">Contact Information</h3>
-                {/* Contact component would go here */}
-                <p>Contact info...</p>
+              <div key={toolCallId} className="w-full border">
+                <Presentation />
               </div>
             );
 

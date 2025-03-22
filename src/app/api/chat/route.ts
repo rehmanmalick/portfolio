@@ -1,8 +1,8 @@
 import { openai } from '@ai-sdk/openai';
 import { streamText } from "ai";
 import { SYSTEM_PROMPT } from './prompt';
-import { getWeather } from './tools/getWeather';
 import { getProjects } from './tools/getProjects';
+import { getPresentation } from './tools/getPresentation';
 
 export const maxDuration = 30;
 
@@ -29,12 +29,13 @@ export async function POST(req: Request) {
 
     const tools = {
       getProjects,
+      getPresentation,
     };
 
     const result = streamText({
       model: openai("gpt-4o-mini"),
       messages,
-      toolCallStreaming: true,
+      //toolCallStreaming: true,
       tools,
       maxSteps: 2,
     });

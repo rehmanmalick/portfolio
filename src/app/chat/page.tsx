@@ -62,9 +62,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     onToolCall: (tool) => {
       // Future tool call handling
       const toolName = tool.toolCall.toolName;
-      if (toolName) {
-        toast.success(`Running: ${toolName}`);
-      }
+      console.log('Tool call:', toolName);
     },
   });
 
