@@ -28,7 +28,7 @@ export function Resume() {
   };
 
   return (
-    <div className="mx-auto w-full pt-16 pb-8 font-sans">
+    <div className="mx-auto w-full py-8 font-sans">
       <motion.div
         onClick={handleDownload}
         className="group relative cursor-pointer overflow-hidden rounded-xl bg-accent p-0 transition-all duration-300"

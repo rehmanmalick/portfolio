@@ -3,9 +3,11 @@
 import { useChat } from '@ai-sdk/react';
 import { ChatRequestOptions } from 'ai';
 import { Message } from 'ai/react';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import ChatBottombar from '@/components/chat/chat-bottombar';
 import ChatMessageContent from '@/components/chat/chat-message-content';
@@ -32,6 +34,13 @@ const MOTION_CONFIG = {
 };
 
 export default function Chat({ initialMessages = [], id }: ChatProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('query');
+  const [autoSubmitted, setAutoSubmitted] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [isTalking, setIsTalking] = useState(false);
+
   const {
     messages,
     input,
@@ -43,32 +52,45 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
     setInput,
     reload,
     addToolResult,
+    append,
   } = useChat({
     id,
     initialMessages,
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
+        // Start playing the video when response begins
+        setIsTalking(true);
+        if (videoRef.current) {
+          videoRef.current.play().catch((error) => {
+            console.error('Failed to play video:', error);
+          });
+        }
       }
     },
     onFinish: () => {
       setLoadingSubmit(false);
+      // Stop the video when response ends
+      setIsTalking(false);
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
     },
     onError: (error) => {
       setLoadingSubmit(false);
+      setIsTalking(false);
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
       console.error('Chat error:', error.message, error.cause);
       toast.error(`Error: ${error.message}`);
     },
     onToolCall: (tool) => {
-      // Future tool call handling
       const toolName = tool.toolCall.toolName;
       console.log('Tool call:', toolName);
     },
   });
 
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
-
-  // Get only the most recent messages to display
   const { currentAIMessage, latestUserMessage, hasActiveTool } = useMemo(() => {
     const latestAIMessageIndex = messages.findLastIndex(
       (m) => m.role === 'assistant'
@@ -85,7 +107,6 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
       hasActiveTool: false,
     };
 
-    // Check if the latest AI message has any active tools
     if (result.currentAIMessage) {
       result.hasActiveTool =
         result.currentAIMessage.parts?.some(
@@ -95,7 +116,6 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
         ) || false;
     }
 
-    // Only show AI message if it exists AND there's no user message after it
     if (latestAIMessageIndex < latestUserMessageIndex) {
       result.currentAIMessage = null;
     }
@@ -113,45 +133,98 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
       )
   );
 
+  // Directly append a message and trigger the AI response
+  const submitQuery = (query: string) => {
+    if (!query.trim() || isToolInProgress) return;
+
+    setLoadingSubmit(true);
+
+    // Use the append method from useChat which correctly handles adding a user message
+    // and triggering the AI response
+    append({
+      role: 'user',
+      content: query,
+    });
+  };
+
+  useEffect(() => {
+    if (videoRef.current) {
+      // Set up video but don't automatically play it
+      videoRef.current.loop = true;
+      videoRef.current.muted = true;
+      videoRef.current.playsInline = true;
+
+      // Initially pause the video
+      videoRef.current.pause();
+    }
+
+    // Submit initial query from URL parameter if present and not already submitted
+    if (initialQuery && !autoSubmitted) {
+      setAutoSubmitted(true);
+
+      // Set the input field to show the query
+      setInput('');
+
+      // Submit the query directly
+      submitQuery(initialQuery);
+    }
+  }, [initialQuery, autoSubmitted]);
+
+  // Update video playback when isLoading or isTalking changes
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isLoading || isTalking) {
+        videoRef.current.play().catch((error) => {
+          console.error('Failed to play video:', error);
+        });
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isLoading, isTalking]);
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!input.trim() || isToolInProgress) return;
 
-    // Clear any existing AI messages immediately when a new message is sent
-    const currentMessages = [...messages];
-    const newMessages = currentMessages.filter((m) => m.role !== 'assistant');
-    setMessages(newMessages);
+    // Use the same submitQuery function for consistency
+    submitQuery(input);
 
-    setLoadingSubmit(true);
-
-    const requestOptions: ChatRequestOptions = {
-      body: {},
-    };
-
-    handleSubmit(e, requestOptions);
+    // Clear input after submission
+    setInput('');
   };
 
   const handleStop = () => {
     stop();
     setLoadingSubmit(false);
+    setIsTalking(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
   };
 
   return (
     <div className="container mx-auto grid h-screen max-w-3xl grid-rows-[auto_1fr_auto] overflow-hidden px-2">
-      {/* Avatar area - dynamic sizing based on tool status */}
       <div
-        className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-2 pb-0' : 'py-6'}`}
+        className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
       >
         <div className="flex justify-center">
-          <div
-            className={`bg-secondary flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-16 w-16' : 'h-32 w-32'}`}
-          >
-            <span className="text-secondary-foreground">Avatar</span>
-          </div>
+          <Link href="/">
+            <div
+              className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
+            >
+              <video
+                ref={videoRef}
+                src="/final_memojis.webm"
+                className="h-full w-full scale-200 object-contain"
+                muted
+                playsInline
+              />
+            </div>
+          </Link>
         </div>
 
-        {/* User message bubble - only shown when waiting for AI response */}
         <AnimatePresence>
           {latestUserMessage && !currentAIMessage && (
             <motion.div {...MOTION_CONFIG} className="flex px-4 pt-4">
@@ -170,7 +243,6 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
         </AnimatePresence>
       </div>
 
-      {/* Main content area - flexible height */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <AnimatePresence mode="wait">
           {currentAIMessage ? (
@@ -194,9 +266,9 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
         </AnimatePresence>
       </div>
 
-      {/* Input area - fixed height */}
-      <div className="mt-auto flex flex-col items-center gap-2">
-        <Helper setInput={setInput} />
+      <div className="mt-auto flex flex-col items-center gap-5">
+        {/* Pass submitQuery to Helper component */}
+        <Helper setInput={setInput} submitQuery={submitQuery} />
         <ChatBottombar
           input={input}
           handleInputChange={handleInputChange}

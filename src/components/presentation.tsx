@@ -43,7 +43,7 @@ export function Presentation() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-6 font-sans">
+    <div className="mx-auto w-full max-w-5xl py-6 font-sans">
       <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
         {/* Image section */}
         <div className="relative mx-auto aspect-square w-full max-w-sm">
@@ -59,7 +59,7 @@ export function Presentation() {
                 alt={profile.name}
                 width={500}
                 height={500}
-                className="h-full w-full object-cover object-center grayscale-100 filter"
+                className="h-full w-full object-cover object-center"
                 onError={(e) => {
                   // Fallback to placeholder if image fails to load
                   const target = e.target as HTMLImageElement;

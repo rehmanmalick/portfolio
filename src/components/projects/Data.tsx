@@ -1,75 +1,418 @@
-import Image from "next/image";
+import Image from 'next/image';
+import { Image as Img } from 'lucide-react';
+import { ChevronRight, Link } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
-const DummyContent = () => {
-  return (
-    <>
-      {[...new Array(1).fill(1)].map((_, index) => {
-        return (
-          <div
-            key={"dummy-content" + index}
-            className="bg-[#F5F5F7] p-8 md:p-14 rounded-3xl mb-4"
-          >
-            <p className="text-neutral-600 text-base md:text-2xl font-sans max-w-3xl mx-auto">
-              <span className="font-bold text-neutral-700">
-                The first rule of Apple club is that you boast about Apple club.
-              </span>{" "}
-              Keep a journal, quickly jot down a grocery list, and take amazing
-              class notes. Want to convert those notes to text? No problem.
-              Langotiya jeetu ka mara hua yaar is ready to capture every
-              thought.
-            </p>
-            <Image
-              src="https://assets.aceternity.com/macbook.png"
-              alt="Macbook mockup from Aceternity UI"
-              height="500"
-              width="500"
-              className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain"
-            />
-          </div>
-        );
-      })}
-    </>
-  );
-};
+// Enhanced project content array with all projects
+const PROJECT_CONTENT = [
+  {
+    title: 'Rrate',
+    description:
+      "Rrate is a fun website to allow user to compare his salary with the richest people in the world. Try it now it's online!",
+    techStack: ['Html', 'Css', 'Javascript'],
+    date: '2024',
+    links: [
+      {
+        name: 'website',
+        url: 'https://rrate.app',
+      },
+      {
+        name: 'github',
+        url: 'https://github.com/toukoum/Rrate',
+      },
+    ],
+    images: [
+      {
+        src: '/rrate1.png',
+        alt: 'Rrate landing page',
+      },
+      {
+        src: '/rrate2.png',
+        alt: 'Rrate comparison page',
+      },
+      {
+        src: '/rrate3.png',
+        alt: 'Rrate comparison page',
+      },
+    ],
+  },
+  {
+    title: 'Defai',
+    description:
+      "We Win ETHOXford hackathon by building DEFAI. DEFAI stands for Decentralized Finance Artificial Intelligence. It's an AI-powered chat interface that simplifies on-chain operations on the Avalanche blockchain by allowing users to interact using natural language. This makes complex DeFi operations accessible even for those with limited technical expertise.",
+    techStack: [
+      'Next.js',
+      'TailwindCSS',
+      'shadcn-ui',
+      'Vercel AI SDK',
+      'TypeScript',
+    ],
+    date: '2025',
+    links: [
+      {
+        name: 'website',
+        url: 'https://dorahacks.io/buidl/22605',
+      },
+      {
+        name: 'github',
+        url: 'https://github.com/toukoum/DEFAI',
+      },
+      {
+        name: 'LinkedIn',
+        url: 'https://www.linkedin.com/feed/update/urn:li:activity:7299337190151483392/',
+      },
+      {
+        name: 'Youtube Video',
+        url: 'https://www.youtube.com/watch?v=N9O7los4-ng&t=34s&ab_channel=Toukoum',
+      }
+    ],
+    images: [
+      {
+        src: '/defai1.png',
+        alt: 'Landing Page of Defai',
+      },
+      {
+        src: '/defai2.png',
+        alt: 'Confirmation popup of Defai',
+      },
+      {
+        src: '/defai3.png',
+        alt: 'Chatbot of Defai',
+      },
+      {
+        src: '/defai4.jpeg',
+        alt: 'Winner team',
+      },
+    ],
+  },
+  {
+    title: 'Fitgear',
+    description:
+      'Won the Gotta Go Hack IA by building Fitgear, a virtual voice seller accessible by QR code to improve the ratio between customers and sellers. Created an AI pipeline with API calls and a RAG system for natural language interactions.',
+    techStack: ['Next.js', 'TailwindCSS', 'OpenAI API', 'Langchain'],
+    date: '2024',
+    links: [
+      {
+        name: 'Linkedin',
+        url: 'https://www.linkedin.com/posts/raphael-giraud-60939519a_hackathon-innovation-sporttech-activity-7210399263774674946-qSXq?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAC6vwikBVSEkS7XWktWS7y6GR3GHwAlKslc',
+      },
+    ],
+    images: [
+      {
+        src: '/fitgear2.png',
+        alt: 'Fitgear chatbot',
+      },
+      {
+        src: '/fitgear1.png',
+        alt: 'Fitgear landing page',
+      },
+    ],
+  },
+  {
+    title: 'Datai',
+    description:
+      "DATAI is an AI-powered agent that lets non-technical users query a database using natural language without writing SQL. Built using Next.js, TailwindCSS, shadcn-ui, and Anthropic's Claude API, this project focuses on simplicity, speed, and user-friendly design.",
+    techStack: [
+      'Next.js',
+      'TailwindCSS',
+      'shadcn-ui',
+      'Claude API',
+      'TypeScript',
+    ],
+    date: '2024',
+    links: [
+      {
+        name: 'GitHub',
+        url: 'https://github.com/toukoum/datai',
+      },
+      {
+        name: 'Youtube Video Demo',
+        url: 'https://youtu.be/iE0RXjdbQsw',
+      }
+    ],
+    images: [
+      {
+        src: '/datai1.png',
+        alt: 'Datai landing page',
+      },
+      {
+        src: '/datai2.png',
+        alt: 'Datai chatbot',
+      },
+      {
+        src: '/datai3.png',
+        alt: 'Datai chatbot',
+      },
+      {
+        src: '/datai4.png',
+        alt: 'Datai chatbot',
+      }
+    ],
+  },
+  {
+    title: '3d Pong Game',
+    description:
+      "Transcendance is the final project of my 42 cursus. It's a 3D pong game with multiplayer capabilities, user authentication, and real-time gameplay. We had to do everything from scratch, so it was pretty challenging and we learned a lot.",
+    techStack: ['Django', 'Python', 'JavaScript', 'Websockets', 'PostgreSQL', 'Docker', 'Nginx', 'Web3', 'Solidity'],
+    date: '2023',
+    links: [
+      {
+        name: 'GitHub',
+        url: 'https://github.com/toukoum/Transcendance',
+      },
+    ],
+    images: [
+      {
+        src: '/trans1.png',
+        alt: 'Transcendance landing page',
+      },
+      {
+        src: '/trans2.png',
+        alt: 'Transcendance game',
+      },
+      {
+        src: '/trans3.png',
+        alt: 'Transcendance game',
+      },
+      {
+        src: '/trans4.png',
+        alt: 'Transcendance game',
+      },
+      {
+        src: '/trans5.png',
+        alt: 'Transcendance game',
+      },
+      {
+        src: '/trans6.png',
+        alt: 'Transcendance game',
+      }
 
-export const data = [
-  {
-    category: "Artificial Intelligence",
-    title: "You can do more with AI.",
-    src: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=3556&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
+    ],
   },
   {
-    category: "Productivity",
-    title: "Enhance your productivity.",
-    src: "https://images.unsplash.com/photo-1531554694128-c4c6665f59c2?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
+    title: 'Minishell',
+    description:
+      "Minishell is a project that aims to create a simple shell. It's a great introduction to process creation and management in C, offering fundamental Unix command-line functionality. This was a very challenging project, but I learned a lot from it.",
+    techStack: ['C', 'Unix', 'Bash'],
+    date: '2023',
+    links: [
+      {
+        name: 'GitHub',
+        url: 'https://github.com/toukoum/Michelle-42',
+      },
+    ],
+    images: [
+      {
+        src: '/minishell1.png',
+        alt: 'Minishell landing page',
+      }
+    ],
   },
   {
-    category: "Product",
-    title: "Launching the new Apple Vision Pro.",
-    src: "https://images.unsplash.com/photo-1713869791518-a770879e60dc?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
+    title: 'YouBot',
+    description:
+      'YouBot is a Python Bot that Scrapes Videos from Pexels, adds a random song from a Songs Folder, then auto-uploads the videos to your YouTube Channel for continuous content generation.',
+    techStack: ['Python', 'YouTube API', 'Pexels API'],
+    date: '2022',
+    links: [
+      {
+        name: "YouTube Video",
+        url: "https://youtu.be/vp1v5mBG7rA "
+      },
+      {
+        name: 'GitHub',
+        url: 'https://github.com/toukoum/YouBot',
+      }
+    ],
+    images: [
+      {
+        src: '/youbot1.jpg',
+        alt: 'Youbot landing page',
+      },
+      {
+        src: '/youbot2.png',
+        alt: 'Youbot chatbot',
+      },
+    ],
   },
-
   {
-    category: "Product",
-    title: "Maps for your iPhone 15 Pro Max.",
-    src: "https://images.unsplash.com/photo-1599202860130-f600f4948364?q=80&w=2515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
-  },
-  {
-    category: "iOS",
-    title: "Photography just got better.",
-    src: "https://images.unsplash.com/photo-1602081957921-9137a5d6eaee?q=80&w=2793&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
-  },
-  {
-    category: "Hiring",
-    title: "Hiring for a Staff Software Engineer",
-    src: "https://images.unsplash.com/photo-1511984804822-e16ba72f5848?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
+    title: 'Old Portfolio',
+    description:
+      'My previous traditional portfolio built with vanilla HTML, CSS and JS with GSAP animations for a smooth and interactive user experience.',
+    techStack: ['HTML', 'CSS', 'JavaScript', 'GSAP'],
+    date: '2022',
+    links: [
+      {
+        name: 'Website',
+        url: 'https://toukoum.github.io/portfolio/',
+      },
+      {
+        name: 'GitHub',
+        url: 'https://github.com/toukoum/portfolio',
+      },
+    ],
+    images: [
+      {
+        src: '/oldport1.png',
+        alt: 'Old Portfolio landing page',
+      },
+      {
+        src: '/oldport2.png',
+        alt: 'Old Portfolio projects',
+      }
+    ],
   },
 ];
 
+// Define interface for project prop
+interface ProjectProps {
+  title: string;
+  description?: string;
+  techStack?: string[];
+  date?: string;
+  links?: { name: string; url: string }[];
+  images?: { src: string; alt: string }[];
+}
 
+const ProjectContent = ({ project }: { project: ProjectProps }) => {
+  // Find the matching project data
+  const projectData = PROJECT_CONTENT.find((p) => p.title === project.title);
+
+  if (!projectData) {
+    return <div>Project details not available</div>;
+  }
+
+  return (
+    <div className="space-y-10">
+      {/* Header section with description */}
+      <div className="rounded-3xl bg-[#F5F5F7] p-8 dark:bg-[#1D1D1F]">
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+            <span>{projectData.date}</span>
+          </div>
+
+          <p className="text-secondary-foreground font-sans text-base leading-relaxed md:text-lg">
+            {projectData.description}
+          </p>
+
+          {/* Tech stack */}
+          <div className="pt-4">
+            <h3 className="mb-3 text-sm tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+              Technologies
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {projectData.techStack.map((tech, index) => (
+                <span
+                  key={index}
+                  className="rounded-full bg-neutral-200 px-3 py-1 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Links section */}
+      {projectData.links && projectData.links.length > 0 && (
+        <div className="mb-24">
+          <div className="px-6 mb-4 flex items-center gap-2">
+            <h3 className="text-sm tracking-wide text-neutral-500 dark:text-neutral-400">
+              Links
+            </h3>
+            <Link className="text-muted-foreground w-4" />
+          </div>
+          <Separator className="my-4" />
+          <div className="space-y-3">
+            {projectData.links.map((link, index) => (
+                <a
+                key={index}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-[#F5F5F7] flex items-center justify-between rounded-xl p-4 transition-colors hover:bg-[#E5E5E7] dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                >
+                <span className="font-light capitalize">{link.name}</span>
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Images gallery */}
+      {projectData.images && projectData.images.length > 0 && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4">
+            {projectData.images.map((image, index) => (
+              <div
+                key={index}
+                className="relative aspect-video overflow-hidden rounded-2xl"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover transition-transform"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Main data export with updated content
+export const data = [
+  {
+    category: 'Fun Tool',
+    title: 'Rrate',
+    src: '/ratepreview.png',
+    content: <ProjectContent project={{ title: 'Rrate' }} />,
+  },
+  {
+    category: 'Hackathon Winner',
+    title: 'Defai',
+    src: '/defaipreview.png',
+    content: <ProjectContent project={{ title: 'Defai' }} />,
+  },
+  {
+    category: 'Hackathon Winner',
+    title: 'Fitgear',
+    src: '/fitgearpreview.png',
+    content: <ProjectContent project={{ title: 'Fitgear' }} />,
+  },
+  {
+    category: 'Business Intelligence',
+    title: 'Datai',
+    src: '/dataipreview.png',
+    content: <ProjectContent project={{ title: 'Datai' }} />,
+  },
+  {
+    category: '42 Project',
+    title: '3d Pong Game',
+    src: '/transcendancepreview.png',
+    content: <ProjectContent project={{ title: '3d Pong Game' }} />,
+  },
+  {
+    category: '42 Project',
+    title: 'Minishell',
+    src: '/minishellpreview.png',
+    content: <ProjectContent project={{ title: 'Minishell' }} />,
+  },
+  {
+    category: 'Automation',
+    title: 'YouBot',
+    src: '/youbotpreview.png',
+    content: <ProjectContent project={{ title: 'YouBot' }} />,
+  },
+  {
+    category: 'Web Development',
+    title: 'Old Portfolio',
+    src: '/oldportfoliopreview.png',
+    content: <ProjectContent project={{ title: 'Old Portfolio' }} />,
+  },
+];

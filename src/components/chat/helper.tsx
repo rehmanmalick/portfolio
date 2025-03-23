@@ -22,6 +22,7 @@ import {
 } from '@radix-ui/react-tooltip';
 import { useState } from 'react';
 import { Drawer } from 'vaul';
+import { motion } from 'framer-motion';
 
 const questionsByCategory = [
   {
@@ -88,40 +89,70 @@ const questionsByCategory = [
   },
 ];
 
-// Props for the Helper component
+// Animated Chevron component
+const AnimatedChevron = () => {
+  return (
+    <motion.div
+      animate={{
+        y: [0, -4, 0], // Subtle up and down motion
+      }}
+      transition={{
+        duration: 1.5,
+        ease: 'easeInOut',
+        repeat: Infinity,
+        repeatType: 'loop',
+      }}
+      className="text-primary mb-1.5"
+    >
+      <ChevronUp size={16} />
+    </motion.div>
+  );
+};
+
+// Updated Props for the Helper component
 interface HelperProps {
   setInput?: (value: string) => void;
+  submitQuery?: (query: string) => void; // Added submitQuery function
 }
 
-export default function Helper({ setInput }: HelperProps) {
+export default function Helper({ setInput, submitQuery }: HelperProps) {
   const [open, setOpen] = useState(false);
 
   const handleQuestionClick = (question: string) => {
-    if (setInput) {
-      setInput(question);
+    // If submitQuery is available, directly send the question
+    if (submitQuery) {
+      submitQuery(question);
     }
+    // Close the drawer
     setOpen(false);
   };
+
   return (
     <Drawer.Root open={open} onOpenChange={setOpen}>
       <TooltipProvider>
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
-            <Drawer.Trigger className="relative flex h-10 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md px-3 text-sm font-medium transition-all hover:bg-[#ECECF0] dark:bg-[#161615] dark:text-white dark:hover:bg-[#1A1A19]">
-              <ChevronUp size={20} />
+            <Drawer.Trigger className="group relative flex items-center justify-center">
+              <motion.div
+                className="hover:border-neutral-300 flex cursor-pointer items-center space-x-1 rounded-full border border-neutral-200 bg-white px-4 py-1.5 text-sm transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-900"
+                whileHover={{ scale: 1 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Lightbulb className="mr-1.5 h-4 w-4" />
+                <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                  Need inspiration?
+                </span>
+              </motion.div>
             </Drawer.Trigger>
           </TooltipTrigger>
           <TooltipContent>
-            <div className="bg-background/90 text-primary mb-2 flex items-center space-x-2 rounded-full border px-3 py-1.5 text-sm backdrop-blur-md">
-              <Lightbulb className="mr-2 text-primary mx-auto h-4 w-4" />
-              Need inspiration?
-            </div>
+            <AnimatedChevron />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
       <Drawer.Portal>
-        <Drawer.Overlay className="z-100 fixed inset-0 bg-black/60 backdrop-blur-xs" />{' '}
-        <Drawer.Content className="z-100 fixed right-0 bottom-0 left-0 mt-24 flex h-[80%] flex-col rounded-t-[10px] bg-gray-100 outline-none lg:h-[60%]">
+        <Drawer.Overlay className="fixed inset-0 z-100 bg-black/60 backdrop-blur-xs" />
+        <Drawer.Content className="fixed right-0 bottom-0 left-0 z-100 mt-24 flex h-[80%] flex-col rounded-t-[10px] bg-gray-100 outline-none lg:h-[60%]">
           <div className="flex-1 overflow-y-auto rounded-t-[10px] bg-white p-4">
             <div className="mx-auto max-w-md space-y-4">
               <div
@@ -187,25 +218,40 @@ function CategorySection({
   );
 }
 
-// Component for each question item
+// Component for each question item with animated chevron
 interface QuestionItemProps {
   question: string;
   onClick: () => void;
 }
 
 function QuestionItem({ question, onClick }: QuestionItemProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <button
+    <motion.button
       className={cn(
         'flex w-full items-center justify-between rounded-[10px]',
         'text-md bg-[#F7F8F9] px-6 py-4 text-left font-normal',
-        'transition-colors hover:bg-[#F0F0F2] focus:outline-none focus-visible:ring-2',
-        'focus-visible:ring-blue-500'
+        'transition-all',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
       )}
       onClick={onClick}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      whileHover={{ backgroundColor: '#F0F0F2' }}
+      whileTap={{ backgroundColor: '#E8E8EA', scale: 0.98 }}
     >
       <span>{question}</span>
-      <ChevronRight className="ml-2 h-5 w-5 shrink-0 text-gray-400" />
-    </button>
+      <motion.div
+        animate={{ x: isHovered ? 4 : 0 }}
+        transition={{
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+        }}
+      >
+        <ChevronRight className="text-primary h-5 w-5 shrink-0" />
+      </motion.div>
+    </motion.button>
   );
 }
