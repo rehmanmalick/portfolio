@@ -30,7 +30,7 @@ const questionsByCategory = [
     name: 'Me',
     icon: Sparkles,
     questions: [
-      'Tell me about yourself',
+      'Who are you?',
       'What are your passions?',
       'How did you get started in tech?',
       'Where do you see yourself in 5 years?',

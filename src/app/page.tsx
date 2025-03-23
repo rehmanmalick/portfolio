@@ -82,7 +82,7 @@ export default function Home() {
         initial="hidden"
         animate="visible"
       >
-        {/* Logo with Modal trigger */}
+        {/* Logo with Modal trigger - No need to add custom trigger */}
         <div className="relative cursor-pointer transition-transform">
           <WelcomeModal />
         </div>

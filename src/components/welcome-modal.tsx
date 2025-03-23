@@ -13,25 +13,40 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
-export default function WelcomeModal() {
+// Added a trigger prop to accept custom triggers
+interface WelcomeModalProps {
+  trigger?: React.ReactNode;
+}
+
+export default function WelcomeModal({ trigger }: WelcomeModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Default trigger is the logo
+  const defaultTrigger = (
+    <Button
+      variant="ghost"
+      className="hover:bg-accent h-auto w-auto cursor-pointer rounded-2xl p-4 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+      onClick={() => setIsOpen(true)}
+    >
+      <Image
+        src="/logo-toukoum.svg"
+        width={100}
+        height={100}
+        alt="Logo"
+        className="w-6 md:w-8"
+      />
+      <span className="sr-only">About Toukoum</span>
+    </Button>
+  );
 
   return (
     <>
-      <Button
-        variant="ghost"
-        className="hover:bg-accent cursor-pointer h-auto w-auto rounded-2xl p-4 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-        onClick={() => setIsOpen(true)}
-      >
-        <Image
-          src="/logo-toukoum.svg"
-          width={100}
-          height={100}
-          alt="Logo"
-          className="w-6 md:w-8"
-        />
-        <span className="sr-only">About Toukoum</span>
-      </Button>
+      {/* Use custom trigger if provided, otherwise use default */}
+      {trigger ? (
+        <div onClick={() => setIsOpen(true)}>{trigger}</div>
+      ) : (
+        defaultTrigger
+      )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="bg-background max-h-[85vh] overflow-auto rounded-2xl border-none p-4 py-6 shadow-xl sm:max-w-[85vw] md:max-w-[80vw] lg:max-w-[1000px]">
@@ -71,14 +86,14 @@ export default function WelcomeModal() {
                   <h3 className="text-primary flex items-center gap-2 text-xl font-semibold">
                     What's ????
                   </h3>
-                    <p className="text-accent-foreground text-base leading-relaxed">
+                  <p className="text-accent-foreground text-base leading-relaxed">
                     I'm so excited to present my brand new AI Portfolio.
                     <br /> Whether you're a recruiter, a friend, family member,
                     or just curious, feel free to ask anything you want!
                     <br /> You can inquire about my projects, professional
                     experience, skills, education, or even my personal interests
                     and background.
-                    </p>
+                  </p>
                 </div>
 
                 {/* Why section */}

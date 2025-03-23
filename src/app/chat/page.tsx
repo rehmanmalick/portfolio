@@ -6,7 +6,6 @@ import { Message } from 'ai/react';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import ChatBottombar from '@/components/chat/chat-bottombar';
@@ -17,6 +16,8 @@ import {
 } from '@/components/ui/chat/chat-bubble';
 import Helper from '@/components/chat/helper';
 import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
+import WelcomeModal from '@/components/welcome-modal';
+import { Button } from '@/components/ui/button';
 
 export interface ChatProps {
   id?: string;
@@ -210,19 +211,24 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
         className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
       >
         <div className="flex justify-center">
-          <Link href="/">
-            <div
-              className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
-            >
-              <video
-                ref={videoRef}
-                src="/final_memojis.webm"
-                className="h-full w-full scale-[2.2] object-contain"
-                muted
-                playsInline
-              />
-            </div>
-          </Link>
+          {/* Replace Link with WelcomeModal */}
+          <div className="relative cursor-pointer">
+            <WelcomeModal
+              trigger={
+                <div
+                  className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
+                >
+                  <video
+                    ref={videoRef}
+                    src="/final_memojis.webm"
+                    className="h-full w-full scale-[2.2] object-contain"
+                    muted
+                    playsInline
+                  />
+                </div>
+              }
+            />
+          </div>
         </div>
 
         <AnimatePresence>
