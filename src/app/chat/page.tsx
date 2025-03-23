@@ -173,7 +173,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
   // Update video playback when isLoading or isTalking changes
   useEffect(() => {
     if (videoRef.current) {
-      if (isLoading || isTalking) {
+      if (isTalking) {
         videoRef.current.play().catch((error) => {
           console.error('Failed to play video:', error);
         });
@@ -181,7 +181,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
         videoRef.current.pause();
       }
     }
-  }, [isLoading, isTalking]);
+  }, [isTalking]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -217,7 +217,7 @@ export default function Chat({ initialMessages = [], id }: ChatProps) {
               <video
                 ref={videoRef}
                 src="/final_memojis.webm"
-                className="h-full w-full scale-200 object-contain"
+                className="h-full w-full scale-[2.2] object-contain"
                 muted
                 playsInline
               />

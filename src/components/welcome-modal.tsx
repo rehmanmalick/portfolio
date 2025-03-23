@@ -64,11 +64,11 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-10 md:py-16">
+    <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-10 md:py-16 overflow-hidden">
       {/* Giant background footer text */}
-      <div className="pointer-events-none absolute right-0 bottom-0 left-0 flex w-full justify-center overflow-hidden">
-        <div
-          className="pointer-events-none overflow-hidden bg-gradient-to-b from-blue-500/5 from-10% to-blue-500/0 bg-clip-text text-[14rem] leading-none font-black text-transparent select-none sm:block sm:h-36 md:h-48 md:text-[18rem] lg:h-64 lg:text-[20rem] dark:from-blue-300/10 dark:to-blue-300/0"
+      <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden flex justify-center pointer-events-none">
+        <div 
+          className="pointer-events-none select-none overflow-hidden bg-gradient-to-b from-blue-500/5 from-10% to-blue-500/0 bg-clip-text text-[14rem] font-black leading-none text-transparent sm:block sm:h-36 md:h-48 md:text-[18rem] lg:h-64 lg:text-[20rem] dark:from-blue-300/10 dark:to-blue-300/0"
           style={{ marginBottom: '-2.5rem' }}
         >
           toukoum
@@ -77,7 +77,7 @@ export default function Home() {
 
       {/* Top elements (coming from top) */}
       <motion.div
-        className="z-10 mb-8 flex flex-col items-center justify-center text-center md:mb-12"
+        className="mb-8 flex flex-col items-center justify-center text-center md:mb-12 z-10"
         variants={topElementVariants}
         initial="hidden"
         animate="visible"
@@ -93,7 +93,7 @@ export default function Home() {
             className="w-8 md:w-10"
           />
         </div>
-
+        
         <h2 className="text-secondary-foreground text-xl font-semibold md:text-2xl dark:text-neutral-300">
           Meet Toukoum
         </h2>
@@ -103,7 +103,7 @@ export default function Home() {
       </motion.div>
 
       {/* Center memoji (stable) */}
-      <div className="relative z-10 mb-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72">
+      <div className="relative mb-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72 z-10">
         <Image
           src="/landing-memojis.png"
           width={2000}
@@ -119,7 +119,7 @@ export default function Home() {
         variants={bottomElementVariants}
         initial="hidden"
         animate="visible"
-        className="z-10 w-full max-w-lg md:px-0"
+        className="w-full max-w-lg md:px-0 z-10"
       >
         <form onSubmit={handleSubmit} className="relative w-full">
           <div className="mx-auto flex items-center rounded-full border border-neutral-200 bg-neutral-100 py-2.5 pr-2 pl-6 transition-all hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600">

@@ -11,6 +11,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^1.2.7
         version: 1.2.7(zod@3.24.2)
+      '@lordicon/react':
+        specifier: ^1.10.1
+        version: 1.10.1(react@19.0.0)
       '@radix-ui/react-avatar':
         specifier: ^1.1.3
         version: 1.1.3(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -371,6 +374,24 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [win32]
+
+  '@lordicon/helpers@1.10.1':
+    resolution: {integrity: sha512-GUOffYns36Y7j2c0oWWx0AJB80unvVnYrF1VCXJ7dAGuCyFhxuaR6NrzKgDPbY98Vn1q6b+7rRdfUEyXISiQgQ==}
+
+  '@lordicon/react@1.10.1':
+    resolution: {integrity: sha512-Dv1Cwhpt0Ut/bIZVVSqkE2rCC+C8Yg/QDj+aM3brAahKgNl/Eivh/iZ8Ik4yUbjTutODTREPQV/BwWb08VjNFg==}
+    peerDependencies:
+      lottie-react-native: '*'
+      lottie-web: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      lottie-react-native:
+        optional: true
+      lottie-web:
+        optional: true
+      react-native:
+        optional: true
 
   '@napi-rs/wasm-runtime@0.2.7':
     resolution: {integrity: sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw==}
@@ -3019,6 +3040,13 @@ snapshots:
 
   '@img/sharp-win32-x64@0.33.5':
     optional: true
+
+  '@lordicon/helpers@1.10.1': {}
+
+  '@lordicon/react@1.10.1(react@19.0.0)':
+    dependencies:
+      '@lordicon/helpers': 1.10.1
+      react: 19.0.0
 
   '@napi-rs/wasm-runtime@0.2.7':
     dependencies:
