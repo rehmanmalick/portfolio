@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import WelcomeModal from '@/components/welcome-modal';
 import { motion } from 'framer-motion';
-import WelcomeModal from '@/components/welcome-modal'; // Import the WelcomeModal component
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 
 export default function Home() {
   const [input, setInput] = useState('');
@@ -64,14 +64,14 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-10 md:py-16">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pb-10 md:pb-20">
       {/* Giant background footer text */}
       <div className="pointer-events-none absolute right-0 bottom-0 left-0 flex w-full justify-center overflow-hidden">
         <div
-          className="pointer-events-none overflow-hidden bg-gradient-to-b from-blue-500/5 from-10% to-blue-500/0 bg-clip-text text-[14rem] leading-none font-black text-transparent select-none sm:block sm:h-36 md:h-48 md:text-[18rem] lg:h-64 lg:text-[20rem] dark:from-blue-300/10 dark:to-blue-300/0"
+          className="pointer-events-none overflow-hidden bg-gradient-to-b from-neutral-500/10 from-10% to-neutral-500/0 bg-clip-text leading-none font-black text-transparent select-none sm:block hidden text-[10rem] sm:h-36 lg:h-52 lg:text-[16rem] dark:from-neutral-300/10 dark:to-neutral-300/0"
           style={{ marginBottom: '-2.5rem' }}
         >
-          toukoum
+          Toukoum
         </div>
       </div>
 
@@ -83,15 +83,8 @@ export default function Home() {
         animate="visible"
       >
         {/* Logo with Modal trigger */}
-        <div className="relative mb-4 cursor-pointer transition-transform hover:scale-105">
+        <div className="relative cursor-pointer transition-transform">
           <WelcomeModal />
-          <Image
-            src="/logo-toukoum.svg"
-            width={100}
-            height={100}
-            alt="Logo"
-            className="w-8 md:w-10"
-          />
         </div>
 
         <h2 className="text-secondary-foreground text-xl font-semibold md:text-2xl dark:text-neutral-300">
@@ -103,7 +96,7 @@ export default function Home() {
       </motion.div>
 
       {/* Center memoji (stable) */}
-      <div className="relative z-10 mb-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72">
+      <div className="relative z-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72">
         <Image
           src="/landing-memojis.png"
           width={2000}
@@ -119,7 +112,7 @@ export default function Home() {
         variants={bottomElementVariants}
         initial="hidden"
         animate="visible"
-        className="z-10 w-full max-w-lg md:px-0"
+        className="z-10 w-full max-w-lg md:px-0 mt-4"
       >
         <form onSubmit={handleSubmit} className="relative w-full">
           <div className="mx-auto flex items-center rounded-full border border-neutral-200 bg-neutral-100 py-2.5 pr-2 pl-6 transition-all hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600">

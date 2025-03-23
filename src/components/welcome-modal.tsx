@@ -1,149 +1,117 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { X, HelpCircle, Lightbulb, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
-import WelcomeModal from '@/components/welcome-modal'; // Import the WelcomeModal component
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
-export default function Home() {
-  const [input, setInput] = useState('');
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!input.trim()) return;
-
-    // Encode the input for URL safety
-    const encodedQuery = encodeURIComponent(input.trim());
-
-    // Navigate to chat page with the query parameter
-    router.push(`/chat?query=${encodedQuery}`);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing && input.trim()) {
-      e.preventDefault();
-      const form = e.currentTarget.form;
-      if (form) form.requestSubmit();
-    }
-  };
-
-  // Simple variants for top elements (coming from top)
-  const topElementVariants = {
-    hidden: { opacity: 0, y: -60 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: 'ease',
-        duration: 0.8,
-      },
-    },
-  };
-
-  // Simple variants for bottom elements (coming from bottom)
-  const bottomElementVariants = {
-    hidden: { opacity: 0, y: 80 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: 'ease',
-        duration: 0.8,
-        delay: 0.2,
-      },
-    },
-  };
+export default function WelcomeModal() {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-10 md:py-16 overflow-hidden">
-      {/* Giant background footer text */}
-      <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden flex justify-center pointer-events-none">
-        <div 
-          className="pointer-events-none select-none overflow-hidden bg-gradient-to-b from-blue-500/5 from-10% to-blue-500/0 bg-clip-text text-[14rem] font-black leading-none text-transparent sm:block sm:h-36 md:h-48 md:text-[18rem] lg:h-64 lg:text-[20rem] dark:from-blue-300/10 dark:to-blue-300/0"
-          style={{ marginBottom: '-2.5rem' }}
-        >
-          toukoum
-        </div>
-      </div>
-
-      {/* Top elements (coming from top) */}
-      <motion.div
-        className="mb-8 flex flex-col items-center justify-center text-center md:mb-12 z-10"
-        variants={topElementVariants}
-        initial="hidden"
-        animate="visible"
+    <>
+      <Button
+        variant="ghost"
+        className="hover:bg-accent cursor-pointer h-auto w-auto rounded-2xl p-4 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+        onClick={() => setIsOpen(true)}
       >
-        {/* Logo with Modal trigger */}
-        <div className="relative mb-4 cursor-pointer transition-transform hover:scale-105">
-          <WelcomeModal />
-          <Image
-            src="/logo-toukoum.svg"
-            width={100}
-            height={100}
-            alt="Logo"
-            className="w-8 md:w-10"
-          />
-        </div>
-        
-        <h2 className="text-secondary-foreground text-xl font-semibold md:text-2xl dark:text-neutral-300">
-          Meet Toukoum
-        </h2>
-        <h1 className="bg-background mt-3 text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-          World&apos;s First AI Portfolio
-        </h1>
-      </motion.div>
-
-      {/* Center memoji (stable) */}
-      <div className="relative mb-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72 z-10">
         <Image
-          src="/landing-memojis.png"
-          width={2000}
-          height={2000}
-          alt="Hero"
-          className="translate-y-14 scale-[2] object-cover"
-          priority
+          src="/logo-toukoum.svg"
+          width={100}
+          height={100}
+          alt="Logo"
+          className="w-6 md:w-8"
         />
-      </div>
+        <span className="sr-only">About Toukoum</span>
+      </Button>
 
-      {/* Bottom elements (coming from bottom) */}
-      <motion.div
-        variants={bottomElementVariants}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-lg md:px-0 z-10"
-      >
-        <form onSubmit={handleSubmit} className="relative w-full">
-          <div className="mx-auto flex items-center rounded-full border border-neutral-200 bg-neutral-100 py-2.5 pr-2 pl-6 transition-all hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyPress}
-              placeholder="Ask me anything"
-              className="w-full border-none bg-transparent text-base text-neutral-800 placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none dark:text-neutral-200 dark:placeholder:text-neutral-500"
-            />
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="bg-background max-h-[85vh] overflow-auto rounded-2xl border-none p-4 py-6 shadow-xl sm:max-w-[85vw] md:max-w-[80vw] lg:max-w-[1000px]">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex h-full flex-col"
+          >
+            {/* Header */}
+            <DialogHeader className="flex flex-row items-start justify-between px-8 pt-8 pb-6">
+              <div>
+                <DialogTitle className="flex items-center gap-2 text-4xl font-bold tracking-tight">
+                  Welcome
+                  <Sparkles className="text-primary h-6 w-6" />
+                </DialogTitle>
+                <DialogDescription className="mt-2 text-base">
+                  {/*My interactive AI portfolio experience*/}
+                </DialogDescription>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground bg-muted/80 h-8 w-8 rounded-full"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="h-5 w-5" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </DialogHeader>
 
-            <button
-              type="submit"
-              disabled={!input.trim()}
-              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
-              aria-label="Submit question"
-            >
-              <ArrowRight className="h-5 w-5" />
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
+            {/* Content area */}
+            <div className="space-y-6 overflow-y-auto px-8 py-4">
+              <section className="bg-accent w-full space-y-8 rounded-2xl p-8">
+                {/* What section */}
+                <div className="space-y-3">
+                  <h3 className="text-primary flex items-center gap-2 text-xl font-semibold">
+                    What's ????
+                  </h3>
+                    <p className="text-accent-foreground text-base leading-relaxed">
+                    I'm so excited to present my brand new AI Portfolio.
+                    <br /> Whether you're a recruiter, a friend, family member,
+                    or just curious, feel free to ask anything you want!
+                    <br /> You can inquire about my projects, professional
+                    experience, skills, education, or even my personal interests
+                    and background.
+                    </p>
+                </div>
+
+                {/* Why section */}
+                <div className="space-y-3">
+                  <h3 className="text-primary flex items-center gap-2 text-xl font-semibold">
+                    Why ???
+                  </h3>
+                  <p className="text-accent-foreground text-base leading-relaxed">
+                    Traditional portfolios can be limiting – they can't adapt to
+                    every visitor's specific needs. With this AI approach, my
+                    portfolio becomes exactly what you're interested in knowing
+                    about me and my work.
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-col items-center px-8 pt-4 pb-0 md:pb-8">
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="h-auto rounded-full px-4 py-3"
+                size="sm"
+              >
+                Start Chatting
+              </Button>
+              <p className="text-muted-foreground mt-6 text-center text-sm">
+                If you love it, please share it! Feedback is always welcome.
+              </p>
+            </div>
+          </motion.div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
