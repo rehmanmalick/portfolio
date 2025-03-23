@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, HelpCircle, Lightbulb, Sparkles } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   Dialog,

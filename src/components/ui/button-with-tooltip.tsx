@@ -13,13 +13,15 @@ interface ButtonWithTooltipProps {
   toolTipText: string;
 }
 
-const ButtonWithTooltip = forwardRef<HTMLDivElement, ButtonWithTooltipProps>(
+const ButtonWithTooltip = forwardRef<HTMLButtonElement, ButtonWithTooltipProps>(
   ({ children, side, toolTipText }, ref) => {
     return (
       <TooltipProvider>
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
-            {React.cloneElement(children, { ref })}
+            {React.isValidElement(children) &&
+            // @ts-ignore 
+              React.cloneElement(children, { ref: ref as React.Ref<HTMLElement> })}
           </TooltipTrigger>
           <TooltipContent side={side}>
             <div>{toolTipText}</div>

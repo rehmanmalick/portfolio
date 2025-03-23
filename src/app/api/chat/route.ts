@@ -8,8 +8,8 @@ import { getContact } from './tools/getContact';
 
 export const maxDuration = 30;
 
-// Custom error handler to extract a meaningful error message
-export function errorHandler(error: unknown) {
+// ❌ Pas besoin de l'export ici, Next.js n'aime pas ça
+function errorHandler(error: unknown) {
   if (error == null) {
     return 'Unknown error';
   }
@@ -44,14 +44,12 @@ export async function POST(req: Request) {
       maxSteps: 2,
     });
 
-    // Pass the error handler to surface any errors in the stream response
     return result.toDataStreamResponse({
       getErrorMessage: errorHandler,
     });
   } catch (err) {
     console.error("Global error:", err);
     const errorMessage = errorHandler(err);
-    // Return an error response with detailed information to the frontend
     return new Response(errorMessage, { status: 500 });
   }
 }
