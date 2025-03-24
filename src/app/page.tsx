@@ -122,7 +122,7 @@ export default function Home() {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyPress}
-              placeholder="Ask me anything"
+              placeholder="Who are you?"
               className="w-full border-none bg-transparent text-base text-neutral-800 placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none dark:text-neutral-200 dark:placeholder:text-neutral-500"
             />
 
