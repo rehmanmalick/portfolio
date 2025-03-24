@@ -57,7 +57,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
             className="flex h-full flex-col"
           >
             {/* Header */}
-            <DialogHeader className="flex flex-row items-start justify-between px-8 pt-8 pb-6">
+            <DialogHeader className="relative flex flex-row items-start justify-between px-8 pt-8 pb-6">
               <div>
                 <DialogTitle className="flex items-center gap-2 text-4xl font-bold tracking-tight">
                   Welcome
@@ -70,10 +70,10 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-muted-foreground bg-muted/80 h-8 w-8 rounded-full"
+                className="sticky top-0 right-0 cursor-pointer rounded-full bg-black p-2 text-white hover:bg-black/90 hover:text-white"
                 onClick={() => setIsOpen(false)}
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
                 <span className="sr-only">Close</span>
               </Button>
             </DialogHeader>
@@ -87,12 +87,12 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
                     What's ????
                   </h3>
                   <p className="text-accent-foreground text-base leading-relaxed">
-                    I'm so excited to present my brand new AI Portfolio.
+                    I'm so excited to present my{' '}
+                    <strong>brand new AI Portfolio.</strong>
                     <br /> Whether you're a recruiter, a friend, family member,
                     or just curious, feel free to ask anything you want!
-                    <br /> You can inquire about my projects, professional
-                    experience, skills, education, or even my personal interests
-                    and background.
+                    <br /> You can inquire about my projects, skills, education,
+                    or even my personal interests.
                   </p>
                 </div>
 
@@ -102,10 +102,13 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
                     Why ???
                   </h3>
                   <p className="text-accent-foreground text-base leading-relaxed">
-                    Traditional portfolios can be limiting – they can't adapt to
-                    every visitor's specific needs. With this AI approach, my
-                    portfolio becomes exactly what you're interested in knowing
-                    about me and my work.
+                    Traditional portfolios can be limiting. <br /> They can't
+                    adapt to every visitor's specific needs. <br /> With this AI
+                    approach, my portfolio becomes{' '}
+                    <strong>
+                      exactly what you're interested in knowing about me and my
+                      work.
+                    </strong>
                   </p>
                 </div>
               </section>

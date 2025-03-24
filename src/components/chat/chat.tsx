@@ -1,12 +1,13 @@
 'use client';
 import { useChat } from '@ai-sdk/react';
-import { ChatRequestOptions } from 'ai';
 import { Message } from 'ai/react';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic'; // Importer dynamic de Next.js
 
+// Autres imports...
 import ChatBottombar from '@/components/chat/chat-bottombar';
 import ChatMessageContent from '@/components/chat/chat-message-content';
 import {
@@ -16,7 +17,79 @@ import {
 import Helper from '@/components/chat/helper';
 import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
 import WelcomeModal from '@/components/welcome-modal';
-import { Button } from '@/components/ui/button';
+import { CircleHelp, Info, Settings } from 'lucide-react';
+
+// Créer un composant ClientOnly qui ne sera rendu que côté client
+const ClientOnly = ({ children }) => {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
+
+  return <>{children}</>;
+};
+
+// Créer un composant Avatar qui gère la détection d'iOS et l'affichage approprié
+const Avatar = dynamic(
+  () =>
+    Promise.resolve(({ hasActiveTool, videoRef, isTalking }) => {
+      // Cette fonction ne s'exécutera que côté client
+      const isIOS = () => {
+        // Méthodes multiples de détection
+        const userAgent = window.navigator.userAgent;
+        const platform = window.navigator.platform;
+        const maxTouchPoints = window.navigator.maxTouchPoints || 0;
+
+        // Vérification basée sur userAgent
+        const isIOSByUA =
+          /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        // Vérification basée sur platform
+        const isIOSByPlatform = /iPad|iPhone|iPod/.test(platform);
+
+        // Vérification pour iPad Pro
+        const isIPadOS =
+          platform === 'MacIntel' && maxTouchPoints > 1 && !window.MSStream;
+
+        // Vérification supplémentaire pour Safari
+        const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+
+        return isIOSByUA || isIOSByPlatform || isIPadOS || isSafari;
+      };
+
+      // Utiliser JSX conditionnel en fonction de la détection
+      return (
+        <div
+          className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
+        >
+          {isIOS() ? (
+            <img
+              src="/landing-memojis.png"
+              alt="iOS avatar"
+              className="h-full w-full scale-[2.2] object-contain"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              className="h-full w-full scale-[2.2] object-contain"
+              muted
+              playsInline
+              loop
+            >
+              <source src="/final_memojis.webm" type="video/webm" />
+              <source src="/final_memojis_ios.mp4" type="video/mp4" />
+            </video>
+          )}
+        </div>
+      );
+    }),
+  { ssr: false }
+); // Désactiver le rendu côté serveur
 
 const MOTION_CONFIG = {
   initial: { opacity: 0, y: 20 },
@@ -29,7 +102,7 @@ const MOTION_CONFIG = {
 };
 
 const Chat = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('query');
   const [autoSubmitted, setAutoSubmitted] = useState(false);
@@ -52,7 +125,6 @@ const Chat = () => {
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
-        // Start playing the video when response begins
         setIsTalking(true);
         if (videoRef.current) {
           videoRef.current.play().catch((error) => {
@@ -63,7 +135,6 @@ const Chat = () => {
     },
     onFinish: () => {
       setLoadingSubmit(false);
-      // Stop the video when response ends
       setIsTalking(false);
       if (videoRef.current) {
         videoRef.current.pause();
@@ -117,7 +188,7 @@ const Chat = () => {
   }, [messages]);
 
   const isToolInProgress = messages.some(
-    (m: Message) =>
+    (m) =>
       m.role === 'assistant' &&
       m.parts?.some(
         (part) =>
@@ -126,14 +197,9 @@ const Chat = () => {
       )
   );
 
-  // Directly append a message and trigger the AI response
-  const submitQuery = (query: string) => {
+  const submitQuery = (query) => {
     if (!query.trim() || isToolInProgress) return;
-
     setLoadingSubmit(true);
-
-    // Use the append method from useChat which correctly handles adding a user message
-    // and triggering the AI response
     append({
       role: 'user',
       content: query,
@@ -142,28 +208,19 @@ const Chat = () => {
 
   useEffect(() => {
     if (videoRef.current) {
-      // Set up video but don't automatically play it
       videoRef.current.loop = true;
       videoRef.current.muted = true;
       videoRef.current.playsInline = true;
-
-      // Initially pause the video
       videoRef.current.pause();
     }
 
-    // Submit initial query from URL parameter if present and not already submitted
     if (initialQuery && !autoSubmitted) {
       setAutoSubmitted(true);
-
-      // Set the input field to show the query
       setInput('');
-
-      // Submit the query directly
       submitQuery(initialQuery);
     }
   }, [initialQuery, autoSubmitted]);
 
-  // Update video playback when isLoading or isTalking changes
   useEffect(() => {
     if (videoRef.current) {
       if (isTalking) {
@@ -176,15 +233,10 @@ const Chat = () => {
     }
   }, [isTalking]);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-
     if (!input.trim() || isToolInProgress) return;
-
-    // Use the same submitQuery function for consistency
     submitQuery(input);
-
-    // Clear input after submission
     setInput('');
   };
 
@@ -198,83 +250,87 @@ const Chat = () => {
   };
 
   return (
-    <div className="container mx-auto grid h-screen max-w-3xl grid-rows-[auto_1fr_auto] overflow-hidden px-2">
-      <div
-        className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
-      >
-        <div className="flex justify-center">
-          {/* Replace Link with WelcomeModal */}
-          <div className="relative cursor-pointer">
-            <WelcomeModal
-              trigger={
-                <div
-                  className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
-                >
-                  <video
-                    ref={videoRef}
-                    src="/final_memojis.webm"
-                    className="h-full w-full scale-[2.2] object-contain"
-                    muted
-                    playsInline
-                  />
-                </div>
-              }
-            />
+    <div className='relative'>
+      <WelcomeModal
+        trigger={
+          <div className="z-10 hover:bg-accent absolute top-6 right-8 cursor-pointer rounded-2xl px-4 py-2">
+            <Info className="text-accent-foreground h-8" />
           </div>
-        </div>
+        }
+      />
 
-        <AnimatePresence>
-          {latestUserMessage && !currentAIMessage && (
-            <motion.div {...MOTION_CONFIG} className="flex px-4 pt-4">
-              <ChatBubble variant="sent">
-                <ChatBubbleMessage>
-                  <ChatMessageContent
-                    message={latestUserMessage}
-                    isLast={true}
-                    isLoading={false}
-                    reload={() => Promise.resolve(null)}
-                  />
-                </ChatBubbleMessage>
-              </ChatBubble>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <AnimatePresence mode="wait">
-          {currentAIMessage ? (
-            <div className="flex min-h-0 flex-1 flex-col">
-              <SimplifiedChatView
-                message={currentAIMessage}
-                isLoading={isLoading}
-                reload={reload}
-                addToolResult={addToolResult}
-              />
+      <div className="relative container mx-auto grid h-screen max-w-3xl grid-rows-[auto_1fr_auto] overflow-hidden px-2">
+        <div
+          className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
+        >
+          <div className="flex justify-center">
+            <div className="relative cursor-pointer">
+              <ClientOnly>
+                <WelcomeModal
+                  trigger={
+                    <Avatar
+                      hasActiveTool={hasActiveTool}
+                      videoRef={videoRef}
+                      isTalking={isTalking}
+                    />
+                  }
+                />
+              </ClientOnly>
             </div>
-          ) : (
-            loadingSubmit && (
-              <motion.div key="loading" {...MOTION_CONFIG} className="px-4">
-                <ChatBubble variant="received">
-                  <ChatBubbleMessage isLoading />
+          </div>
+
+          <AnimatePresence>
+            {latestUserMessage && !currentAIMessage && (
+              <motion.div {...MOTION_CONFIG} className="flex px-4 pt-4">
+                <ChatBubble variant="sent">
+                  <ChatBubbleMessage>
+                    <ChatMessageContent
+                      message={latestUserMessage}
+                      isLast={true}
+                      isLoading={false}
+                      reload={() => Promise.resolve(null)}
+                    />
+                  </ChatBubbleMessage>
                 </ChatBubble>
               </motion.div>
-            )
-          )}
-        </AnimatePresence>
-      </div>
+            )}
+          </AnimatePresence>
+        </div>
 
-      <div className="mt-auto flex flex-col items-center gap-5">
-        {/* Pass submitQuery to Helper component */}
-        <Helper setInput={setInput} submitQuery={submitQuery} />
-        <ChatBottombar
-          input={input}
-          handleInputChange={handleInputChange}
-          handleSubmit={onSubmit}
-          isLoading={isLoading}
-          stop={handleStop}
-          isToolInProgress={isToolInProgress}
-        />
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            {currentAIMessage ? (
+              <div className="flex min-h-0 flex-1 flex-col">
+                <SimplifiedChatView
+                  message={currentAIMessage}
+                  isLoading={isLoading}
+                  reload={reload}
+                  addToolResult={addToolResult}
+                />
+              </div>
+            ) : (
+              loadingSubmit && (
+                <motion.div key="loading" {...MOTION_CONFIG} className="px-4">
+                  <ChatBubble variant="received">
+                    <ChatBubbleMessage isLoading />
+                  </ChatBubble>
+                </motion.div>
+              )
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-auto flex flex-col items-center gap-5">
+          <Helper setInput={setInput} submitQuery={submitQuery} />
+          <ChatBottombar
+            input={input}
+            handleInputChange={handleInputChange}
+            handleSubmit={onSubmit}
+            isLoading={isLoading}
+            stop={handleStop}
+            isToolInProgress={isToolInProgress}
+          />
+        </div>
       </div>
     </div>
   );
