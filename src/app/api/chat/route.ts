@@ -5,6 +5,8 @@ import { getProjects } from './tools/getProjects';
 import { getPresentation } from './tools/getPresentation';
 import { getResume } from './tools/getResume';
 import { getContact } from './tools/getContact';
+import { getSkills } from './tools/getSkills';
+import { getSports } from './tools/getSport';
 
 export const maxDuration = 30;
 
@@ -34,6 +36,8 @@ export async function POST(req: Request) {
       getPresentation,
       getResume,
       getContact,
+      getSkills,
+      getSports,
     };
 
     const result = streamText({

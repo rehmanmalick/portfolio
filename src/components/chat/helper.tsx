@@ -10,6 +10,8 @@ import {
   MailIcon,
   PartyPopper,
   Sparkles,
+  Star,
+  UserSearch,
 } from 'lucide-react';
 
 import { Separator } from '@/components/ui/separator';
@@ -24,11 +26,21 @@ import { useState } from 'react';
 import { Drawer } from 'vaul';
 import { motion } from 'framer-motion';
 
+// List of special questions that need special design
+const specialQuestions = [
+  'Mountain Bike you said?? Show me!',
+  'Who are you?',
+  'Can I see your resume?',
+  'What projects are you most proud of?',
+  'What are your skills?',
+  'How can I reach you?',
+];
+
 const questionsByCategory = [
   {
     id: 'me',
     name: 'Me',
-    icon: Sparkles,
+    icon: UserSearch,
     questions: [
       'Who are you?',
       'What are your passions?',
@@ -41,11 +53,11 @@ const questionsByCategory = [
     name: 'Professional',
     icon: BriefcaseIcon,
     questions: [
-      "What's your educational background?",
       'Can I see your resume?',
-      'Where are you working now?',
       'What makes you a valuable team member?',
-      'What makes your professional background unique?',
+      'Where are you working now?',
+      'Why should I hire you?',
+      "What's your educational background?",
     ],
   },
   {
@@ -54,7 +66,6 @@ const questionsByCategory = [
     icon: CodeIcon,
     questions: [
       'What projects are you most proud of?',
-      "Show me something innovative you've built",
     ],
   },
   {
@@ -62,28 +73,28 @@ const questionsByCategory = [
     name: 'Skills',
     icon: GraduationCapIcon,
     questions: [
-      'What programming languages do you know?',
-      'How do you approach learning new technologies?',
-    ],
+      'What are your skills?',
+      'How was your experience at École 42?',
+    ], 
   },
   {
     id: 'fun',
     name: 'Fun',
     icon: PartyPopper,
     questions: [
-      'Pain au chocolat or chocolatine?',
+      'Mountain Bike you said?? Show me!',
       'Mac or PC?',
-      'What non-tech hobbies do you enjoy?',
-      'If you could have dinner with any tech figure, who would it be?',
+      'What are you certain about that 90% get wrong?',
+      'Pain au chocolat or chocolatine?',
     ],
   },
   {
     id: 'contact',
-    name: 'Contact & Availability',
+    name: 'Contact & Future',
     icon: MailIcon,
     questions: [
       'How can I reach you?',
-      'What types of roles interest you most?',
+      "What kind of project would make you say 'yes' immediately?",
       'Where are you located?',
     ],
   },
@@ -211,6 +222,7 @@ function CategorySection({
             key={index}
             question={question}
             onClick={() => onQuestionClick(question)}
+            isSpecial={specialQuestions.includes(question)}
           />
         ))}
       </div>
@@ -222,26 +234,40 @@ function CategorySection({
 interface QuestionItemProps {
   question: string;
   onClick: () => void;
+  isSpecial: boolean;
 }
 
-function QuestionItem({ question, onClick }: QuestionItemProps) {
+function QuestionItem({ question, onClick, isSpecial }: QuestionItemProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.button
       className={cn(
         'flex w-full items-center justify-between rounded-[10px]',
-        'text-md bg-[#F7F8F9] px-6 py-4 text-left font-normal',
+        'text-md px-6 py-4 text-left font-normal',
         'transition-all',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+        isSpecial 
+          ? 'bg-black' 
+          : 'bg-[#F7F8F9]'
       )}
       onClick={onClick}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      whileHover={{ backgroundColor: '#F0F0F2' }}
-      whileTap={{ backgroundColor: '#E8E8EA', scale: 0.98 }}
+      whileHover={{ 
+        backgroundColor: isSpecial ? undefined : '#F0F0F2',
+      }}
+      whileTap={{ 
+        scale: 0.98,
+        backgroundColor: isSpecial ? undefined : '#E8E8EA'
+      }}
     >
-      <span>{question}</span>
+      <div className="flex items-center">
+        {isSpecial && <Sparkles className="text-white h-4 w-4 mr-2" />}
+        <span className={isSpecial ? 'font-medium text-white' : ''}>
+          {question}
+        </span>
+      </div>
       <motion.div
         animate={{ x: isHovered ? 4 : 0 }}
         transition={{
@@ -250,7 +276,10 @@ function QuestionItem({ question, onClick }: QuestionItemProps) {
           damping: 25,
         }}
       >
-        <ChevronRight className="text-primary h-5 w-5 shrink-0" />
+        <ChevronRight className={cn(
+          "h-5 w-5 shrink-0", 
+          isSpecial ? "text-white" : "text-primary"
+        )} />
       </motion.div>
     </motion.button>
   );

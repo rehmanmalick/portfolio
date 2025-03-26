@@ -59,7 +59,7 @@ export function Contact() {
         {/* Email Section */}
         <div className="mt-8 flex flex-col md:mt-10">
           <div
-            className="group mb-6 cursor-pointer"
+            className="group mb-5 cursor-pointer"
             onClick={() => openLink(`mailto:${contactInfo.email}`)}
           >
             <div className="flex items-center gap-1">

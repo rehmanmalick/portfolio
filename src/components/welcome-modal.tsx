@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Sparkles } from 'lucide-react';
+import { X, Sparkles, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; // Importation correcte pour Next.js 13+
 
 // Added a trigger prop to accept custom triggers
 interface WelcomeModalProps {
@@ -20,6 +21,7 @@ interface WelcomeModalProps {
 
 export default function WelcomeModal({ trigger }: WelcomeModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter(); // Initialisation du router avec useRouter
 
   // Default trigger is the logo
   const defaultTrigger = (
@@ -38,6 +40,13 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
       <span className="sr-only">About Toukoum</span>
     </Button>
   );
+
+  // Fonction qui utilise window.location pour forcer un rechargement complet
+  const handleContactMe = () => {
+    setIsOpen(false);
+    // Forcer un rechargement complet de la page avec la requête
+    window.location.href = '/chat?query=How%20can%20I%20contact%20you%3F';
+  };
 
   return (
     <>
@@ -60,8 +69,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
             <DialogHeader className="relative flex flex-row items-start justify-between px-8 pt-8 pb-6">
               <div>
                 <DialogTitle className="flex items-center gap-2 text-4xl font-bold tracking-tight">
-                  Welcome
-                  <Sparkles className="text-primary h-6 w-6" />
+                  Welcome to Toukoum's AI Portfolio
                 </DialogTitle>
                 <DialogDescription className="mt-2 text-base">
                   {/*My interactive AI portfolio experience*/}
@@ -123,9 +131,14 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
               >
                 Start Chatting
               </Button>
-              <p className="text-muted-foreground mt-6 text-center text-sm">
-                If you love it, please share it! Feedback is always welcome.
-              </p>
+              <div className='flex flex-wrap gap-1 mt-6 text-center text-sm cursor-pointer' onClick={handleContactMe}>
+                <p className="text-muted-foreground  ">
+                  If you love it, please share it! Feedback is always welcome.
+                </p>
+                <div className="cursor-pointer flex items-center text-blue-500 hover:underline">
+                  Contact me.
+                </div>
+              </div>
             </div>
           </motion.div>
         </DialogContent>

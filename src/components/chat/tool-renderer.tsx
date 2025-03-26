@@ -3,6 +3,8 @@ import { Contact } from '../contact';
 import { Presentation } from '../presentation';
 import AllProjects from '../projects/AllProjects';
 import Resume from '../resume';
+import Skills from '../Skills';
+import Sports from '../sport';
 
 interface ToolRendererProps {
   toolInvocations: any[];
@@ -42,21 +44,29 @@ export default function ToolRenderer({
 
           case 'getResume':
             return (
-              <div
-                key={toolCallId}
-                className="w-full rounded-lg p-4"
-              >
+              <div key={toolCallId} className="w-full rounded-lg">
                 <Resume />
               </div>
             );
-        
-            case 'getContact':
+
+          case 'getContact':
             return (
-              <div
-                key={toolCallId}
-                className="w-full rounded-lg"
-              >
+              <div key={toolCallId} className="w-full rounded-lg">
                 <Contact />
+              </div>
+            );
+
+          case 'getSkills':
+            return (
+              <div key={toolCallId} className="w-full rounded-lg">
+                <Skills />
+              </div>
+            );
+
+          case 'getSports':
+            return (
+              <div key={toolCallId} className="w-full rounded-lg">
+                <Sports />
               </div>
             );
 

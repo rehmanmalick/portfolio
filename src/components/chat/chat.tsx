@@ -18,6 +18,7 @@ import Helper from '@/components/chat/helper';
 import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
 import WelcomeModal from '@/components/welcome-modal';
 import { CircleHelp, Info, Settings } from 'lucide-react';
+import Skills from '../Skills';
 
 // Créer un composant ClientOnly qui ne sera rendu que côté client
 const ClientOnly = ({ children }) => {
@@ -250,10 +251,10 @@ const Chat = () => {
   };
 
   return (
-    <div className='relative'>
+    <div className="relative">
       <WelcomeModal
         trigger={
-          <div className="z-10 hover:bg-accent absolute top-6 right-8 cursor-pointer rounded-2xl px-4 py-2">
+          <div className="hover:bg-accent absolute top-6 right-8 z-10 cursor-pointer rounded-2xl px-4 py-2">
             <Info className="text-accent-foreground h-8" />
           </div>
         }

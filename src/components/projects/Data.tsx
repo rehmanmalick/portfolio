@@ -244,7 +244,7 @@ const PROJECT_CONTENT = [
     links: [
       {
         name: 'Website',
-        url: 'https://toukoum.github.io/portfolio/',
+        url: 'https://toukoum.github.io/oldPortfolio/',
       },
       {
         name: 'GitHub',
