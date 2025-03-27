@@ -5,9 +5,9 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic'; // Importer dynamic de Next.js
+import dynamic from 'next/dynamic';
 
-// Autres imports...
+// Component imports
 import ChatBottombar from '@/components/chat/chat-bottombar';
 import ChatMessageContent from '@/components/chat/chat-message-content';
 import {
@@ -17,10 +17,11 @@ import {
 import Helper from '@/components/chat/helper';
 import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
 import WelcomeModal from '@/components/welcome-modal';
-import { CircleHelp, Info, Settings } from 'lucide-react';
-import Skills from '../Skills';
+import ChatLanding from '@/components/chat/chat-landing';
+import { Info } from 'lucide-react';
 
-// Créer un composant ClientOnly qui ne sera rendu que côté client
+// ClientOnly component for client-side rendering
+//@ts-ignore
 const ClientOnly = ({ children }) => {
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -35,35 +36,44 @@ const ClientOnly = ({ children }) => {
   return <>{children}</>;
 };
 
-// Créer un composant Avatar qui gère la détection d'iOS et l'affichage approprié
-const Avatar = dynamic(
+// Define Avatar component props interface
+interface AvatarProps {
+  hasActiveTool: boolean;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  isTalking: boolean;
+}
+
+// Dynamic import of Avatar component
+const Avatar = dynamic<AvatarProps>(
   () =>
-    Promise.resolve(({ hasActiveTool, videoRef, isTalking }) => {
-      // Cette fonction ne s'exécutera que côté client
+    Promise.resolve(({ hasActiveTool, videoRef, isTalking }: AvatarProps) => {
+      // This function will only execute on the client
       const isIOS = () => {
-        // Méthodes multiples de détection
+        // Multiple detection methods
         const userAgent = window.navigator.userAgent;
         const platform = window.navigator.platform;
         const maxTouchPoints = window.navigator.maxTouchPoints || 0;
 
-        // Vérification basée sur userAgent
+        // UserAgent-based check
         const isIOSByUA =
+          //@ts-ignore
           /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        // Vérification basée sur platform
+        // Platform-based check
         const isIOSByPlatform = /iPad|iPhone|iPod/.test(platform);
 
-        // Vérification pour iPad Pro
+        // iPad Pro check
         const isIPadOS =
+          //@ts-ignore
           platform === 'MacIntel' && maxTouchPoints > 1 && !window.MSStream;
 
-        // Vérification supplémentaire pour Safari
+        // Safari check
         const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
 
         return isIOSByUA || isIOSByPlatform || isIPadOS || isSafari;
       };
 
-      // Utiliser JSX conditionnel en fonction de la détection
+      // Conditional rendering based on detection
       return (
         <div
           className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
@@ -90,7 +100,7 @@ const Avatar = dynamic(
       );
     }),
   { ssr: false }
-); // Désactiver le rendu côté serveur
+);
 
 const MOTION_CONFIG = {
   initial: { opacity: 0, y: 20 },
@@ -198,6 +208,7 @@ const Chat = () => {
       )
   );
 
+  //@ts-ignore
   const submitQuery = (query) => {
     if (!query.trim() || isToolInProgress) return;
     setLoadingSubmit(true);
@@ -234,6 +245,7 @@ const Chat = () => {
     }
   }, [isTalking]);
 
+  //@ts-ignore
   const onSubmit = (e) => {
     e.preventDefault();
     if (!input.trim() || isToolInProgress) return;
@@ -249,6 +261,9 @@ const Chat = () => {
       videoRef.current.pause();
     }
   };
+
+  // Check if this is the initial empty state (no messages)
+  const isEmptyState = !currentAIMessage && !latestUserMessage && !loadingSubmit;
 
   return (
     <div className="relative">
@@ -300,7 +315,15 @@ const Chat = () => {
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <AnimatePresence mode="wait">
-            {currentAIMessage ? (
+            {isEmptyState ? (
+              <motion.div
+                key="landing"
+                className="flex-1 flex items-center justify-center"
+                {...MOTION_CONFIG}
+              >
+                <ChatLanding submitQuery={submitQuery} />
+              </motion.div>
+            ) : currentAIMessage ? (
               <div className="flex min-h-0 flex-1 flex-col">
                 <SimplifiedChatView
                   message={currentAIMessage}

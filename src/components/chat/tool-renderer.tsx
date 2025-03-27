@@ -3,8 +3,9 @@ import { Contact } from '../contact';
 import { Presentation } from '../presentation';
 import AllProjects from '../projects/AllProjects';
 import Resume from '../resume';
-import Skills from '../Skills';
+import Skills from '../skills';
 import Sports from '../sport';
+import Crazy from '../crazy';
 
 interface ToolRendererProps {
   toolInvocations: any[];
@@ -67,6 +68,13 @@ export default function ToolRenderer({
             return (
               <div key={toolCallId} className="w-full rounded-lg">
                 <Sports />
+              </div>
+            );
+
+          case 'getCrazy':
+            return (
+              <div key={toolCallId} className="w-full rounded-lg">
+                <Crazy />
               </div>
             );
 

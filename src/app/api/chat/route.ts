@@ -7,6 +7,7 @@ import { getResume } from './tools/getResume';
 import { getContact } from './tools/getContact';
 import { getSkills } from './tools/getSkills';
 import { getSports } from './tools/getSport';
+import { getCrazy } from './tools/getCrazy';
 
 export const maxDuration = 30;
 
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
       getContact,
       getSkills,
       getSports,
+      getCrazy,
     };
 
     const result = streamText({

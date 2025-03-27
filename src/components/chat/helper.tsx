@@ -34,6 +34,7 @@ const specialQuestions = [
   'What projects are you most proud of?',
   'What are your skills?',
   'How can I reach you?',
+  'What\'s the craziest thing you\'ve ever done?',
 ];
 
 const questionsByCategory = [
@@ -83,9 +84,9 @@ const questionsByCategory = [
     icon: PartyPopper,
     questions: [
       'Mountain Bike you said?? Show me!',
+      'What\'s the craziest thing you\'ve ever done?',
       'Mac or PC?',
       'What are you certain about that 90% get wrong?',
-      'Pain au chocolat or chocolatine?',
     ],
   },
   {

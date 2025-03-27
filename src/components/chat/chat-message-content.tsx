@@ -21,7 +21,7 @@ export type ChatMessageContentProps = {
 };
 
 const CodeBlock = ({ content }: { content: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   // Extract language if present in the first line
   const firstLineBreak = content.indexOf('\n');
