@@ -17,7 +17,7 @@ import { useRef, useState } from 'react';
 
 /* ---------- quick-question data ---------- */
 const questions = {
-  You: 'Who are you? I want to know more about you.',
+  Me: 'Who are you? I want to know more about you.',
   Projects: 'What are your projects? What are you working on right now?',
   Skills: 'What are your skills? Give me a list of your soft and hard skills.',
   Fun: 'What’s the craziest thing you’ve ever done? What are your hobbies?',
@@ -26,7 +26,7 @@ const questions = {
 } as const;
 
 const questionConfig = [
-  { key: 'You', color: '#329696', icon: Laugh },
+  { key: 'Me', color: '#329696', icon: Laugh },
   { key: 'Projects', color: '#3E9858', icon: BriefcaseBusiness },
   { key: 'Skills', color: '#856ED9', icon: Layers },
   { key: 'Fun', color: '#B95F9D', icon: PartyPopper },
@@ -85,7 +85,7 @@ export default function Home() {
           Hey, I'm Raphael 👋
         </h2>
         <h1 className="bg-background text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-          World's first AI portfolio
+          AI portfolio
         </h1>
       </motion.div>
 
