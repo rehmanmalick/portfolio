@@ -50,7 +50,7 @@ export default function ChatBottombar({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full px-4 pb-4 md:pb-8"
+      className="w-full md:pb-8 pb-2"
     >
       <form
         onSubmit={handleSubmit}

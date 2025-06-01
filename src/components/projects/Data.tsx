@@ -2,9 +2,81 @@ import Image from 'next/image';
 import { Image as Img } from 'lucide-react';
 import { ChevronRight, Link } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { url } from 'inspector';
 
 // Enhanced project content array with all projects
 const PROJECT_CONTENT = [
+  {
+    title: 'Synto',
+    description:
+      'Synto is an AI-powered interface that transforms complex blockchain interactions into simple, natural language commands. Whether you want to send tokens, stake assets, swap coins, or even create NFTs or liquidity pools, just tell Synto what to do — no manual wallet interactions, no technical jargon. One of my biggest projects yet',
+    techStack: [
+      'Next.js',
+      'TailwindCSS',
+      'Web3.js',
+      'shadcn-ui',
+      'TypeScript',
+      'Phantom Wallet',
+      'OpenAI API',
+      'Vercel AI SDK',
+      'Solana Agent kit',
+      'Neon',
+      'Prisma'
+    ],
+    date: '2025',
+    links: [
+      {
+        name: 'website',
+        url: 'https://synto.fun',
+      },
+      {
+        name: 'Launch Video',
+        url: 'https://www.youtube.com/watch?v=4QUE2KgKDUw',
+      },
+      {
+        name: 'X',
+        url: 'https://x.com/chainSynto',
+      },
+      {
+        name: 'Technical Video',
+        url: 'https://www.youtube.com/watch?v=1CjBLKPUwtA&feature=youtu.be',
+      },
+      {
+        name: 'Pitch Deck',
+        url: 'https://drive.google.com/file/d/1B3m44mEgv81rJHfjNfTKi147yX4raQed/view?usp=sharing',
+      },
+      {
+        name: 'Usage tutorial',
+        url: 'https://www.youtube.com/watch?v=PRu1cfvT2bA',
+      }
+    ],
+    images: [
+      {
+        src: '/synto1.png',
+        alt: 'Synto landing page',
+      },
+      {
+        src: '/synto2.png',
+        alt: 'Synto chat interface',
+      },
+      {
+        src: '/synto3.png',
+        alt: 'Synto chat interface',
+      },
+      {
+        src: '/synto4.png',
+        alt: 'Synto chat interface',
+      },
+      {
+        src: '/synto5.png',
+        alt: 'Synto chat interface',
+      },
+      {
+        src: '/synto6.png',
+        alt: 'Synto chat interface',
+      },
+    ],
+  },
   {
     title: 'Rrate',
     description:
@@ -367,6 +439,12 @@ const ProjectContent = ({ project }: { project: ProjectProps }) => {
 
 // Main data export with updated content
 export const data = [
+  {
+    category: 'Startup Project',
+    title: 'Synto',
+    src: '/syntopreview.png',
+    content: <ProjectContent project={{ title: 'Synto' }} />,
+  },
   {
     category: 'Fun Tool',
     title: 'Rrate',

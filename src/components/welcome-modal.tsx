@@ -87,7 +87,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
             </DialogHeader>
 
             {/* Content area */}
-            <div className="space-y-6 overflow-y-auto px-8 py-4">
+            <div className="space-y-6 overflow-y-auto px-2 md:px-8 py-4">
               <section className="bg-accent w-full space-y-8 rounded-2xl p-8">
                 {/* What section */}
                 <div className="space-y-3">

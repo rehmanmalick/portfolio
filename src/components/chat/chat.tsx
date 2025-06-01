@@ -1,24 +1,23 @@
 'use client';
 import { useChat } from '@ai-sdk/react';
-import { Message } from 'ai/react';
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 // Component imports
 import ChatBottombar from '@/components/chat/chat-bottombar';
+import ChatLanding from '@/components/chat/chat-landing';
 import ChatMessageContent from '@/components/chat/chat-message-content';
+import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
 import {
   ChatBubble,
   ChatBubbleMessage,
 } from '@/components/ui/chat/chat-bubble';
-import Helper from '@/components/chat/helper';
-import { SimplifiedChatView } from '@/components/chat/simple-chat-view';
 import WelcomeModal from '@/components/welcome-modal';
-import ChatLanding from '@/components/chat/chat-landing';
 import { Info } from 'lucide-react';
+import HelperBoost from './HelperBoost';
 
 // ClientOnly component for client-side rendering
 //@ts-ignore
@@ -263,7 +262,8 @@ const Chat = () => {
   };
 
   // Check if this is the initial empty state (no messages)
-  const isEmptyState = !currentAIMessage && !latestUserMessage && !loadingSubmit;
+  const isEmptyState =
+    !currentAIMessage && !latestUserMessage && !loadingSubmit;
 
   return (
     <div className="relative">
@@ -318,7 +318,7 @@ const Chat = () => {
             {isEmptyState ? (
               <motion.div
                 key="landing"
-                className="flex-1 flex items-center justify-center"
+                className="flex flex-1 items-center justify-center"
                 {...MOTION_CONFIG}
               >
                 <ChatLanding submitQuery={submitQuery} />
@@ -344,8 +344,8 @@ const Chat = () => {
           </AnimatePresence>
         </div>
 
-        <div className="mt-auto flex flex-col items-center gap-5">
-          <Helper setInput={setInput} submitQuery={submitQuery} />
+        <div className="mt-auto flex flex-col items-center gap-3">
+          <HelperBoost submitQuery={submitQuery} setInput={setInput} />
           <ChatBottombar
             input={input}
             handleInputChange={handleInputChange}
