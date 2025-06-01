@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Sparkles, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,9 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'; // Importation correcte pour Next.js 13+
+import { useState } from 'react';
 
 // Added a trigger prop to accept custom triggers
 interface WelcomeModalProps {
@@ -69,7 +69,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
             <DialogHeader className="relative flex flex-row items-start justify-between px-8 pt-8 pb-6">
               <div>
                 <DialogTitle className="flex items-center gap-2 text-4xl font-bold tracking-tight">
-                  Welcome to Toukoum's AI Portfolio
+                  Welcome to AI Portfolio
                 </DialogTitle>
                 <DialogDescription className="mt-2 text-base">
                   {/*My interactive AI portfolio experience*/}
@@ -87,7 +87,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
             </DialogHeader>
 
             {/* Content area */}
-            <div className="space-y-6 overflow-y-auto px-2 md:px-8 py-4">
+            <div className="space-y-6 overflow-y-auto px-2 py-4 md:px-8">
               <section className="bg-accent w-full space-y-8 rounded-2xl p-8">
                 {/* What section */}
                 <div className="space-y-3">
@@ -131,11 +131,14 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
               >
                 Start Chatting
               </Button>
-              <div className='flex flex-wrap gap-1 mt-6 text-center text-sm cursor-pointer' onClick={handleContactMe}>
-                <p className="text-muted-foreground  ">
+              <div
+                className="mt-6 flex cursor-pointer flex-wrap gap-1 text-center text-sm"
+                onClick={handleContactMe}
+              >
+                <p className="text-muted-foreground">
                   If you love it, please share it! Feedback is always welcome.
                 </p>
-                <div className="cursor-pointer flex items-center text-blue-500 hover:underline">
+                <div className="flex cursor-pointer items-center text-blue-500 hover:underline">
                   Contact me.
                 </div>
               </div>

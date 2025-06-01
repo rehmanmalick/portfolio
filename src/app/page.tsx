@@ -1,141 +1,157 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import WelcomeModal from '@/components/welcome-modal';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  Laugh,
+  Layers,
+  PartyPopper,
+  UserRoundSearch,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 
+/* ---------- quick-question data ---------- */
+const questions = {
+  You: 'Who are you? I want to know more about you.',
+  Projects: 'What are your projects? What are you working on right now?',
+  Skills: 'What are your skills? Give me a list of your soft and hard skills.',
+  Fun: 'What’s the craziest thing you’ve ever done? What are your hobbies?',
+  Contact:
+    'How can I reach you? What kind of project would make you say "yes" immediately?',
+} as const;
+
+const questionConfig = [
+  { key: 'You', color: '#329696', icon: Laugh },
+  { key: 'Projects', color: '#3E9858', icon: BriefcaseBusiness },
+  { key: 'Skills', color: '#856ED9', icon: Layers },
+  { key: 'Fun', color: '#B95F9D', icon: PartyPopper },
+  { key: 'Contact', color: '#C19433', icon: UserRoundSearch },
+] as const;
+
+/* ---------- component ---------- */
 export default function Home() {
   const [input, setInput] = useState('');
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
+  const goToChat = (query: string) =>
+    router.push(`/chat?query=${encodeURIComponent(query)}`);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!input.trim()) return;
-
-    // Encode the input for URL safety
-    const encodedQuery = encodeURIComponent(input.trim());
-
-    // Navigate to chat page with the query parameter
-    router.push(`/chat?query=${encodedQuery}`);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing && input.trim()) {
-      e.preventDefault();
-      const form = e.currentTarget.form;
-      if (form) form.requestSubmit();
-    }
-  };
-
-  // Simple variants for top elements (coming from top)
+  /* hero animations (unchanged) */
   const topElementVariants = {
     hidden: { opacity: 0, y: -60 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: 'ease',
-        duration: 0.8,
-      },
+      transition: { type: 'ease', duration: 0.8 },
     },
   };
-
-  // Simple variants for bottom elements (coming from bottom)
   const bottomElementVariants = {
     hidden: { opacity: 0, y: 80 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: 'ease',
-        duration: 0.8,
-        delay: 0.2,
-      },
+      transition: { type: 'ease', duration: 0.8, delay: 0.2 },
     },
   };
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pb-10 md:pb-20">
-      {/* Giant background footer text */}
-      <div className="pointer-events-none absolute right-0 bottom-0 left-0 flex w-full justify-center overflow-hidden">
+      {/* big blurred footer word */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
         <div
-          className="pointer-events-none overflow-hidden bg-gradient-to-b from-neutral-500/10 from-10% to-neutral-500/0 bg-clip-text leading-none font-black text-transparent select-none sm:block hidden text-[10rem] sm:h-36 lg:h-52 lg:text-[16rem] dark:from-neutral-300/10 dark:to-neutral-300/0"
+          className="hidden bg-gradient-to-b from-neutral-500/10 to-neutral-500/0 bg-clip-text text-[10rem] leading-none font-black text-transparent select-none sm:block lg:text-[16rem]"
           style={{ marginBottom: '-2.5rem' }}
         >
           Toukoum
         </div>
       </div>
 
-      {/* Top elements (coming from top) */}
+      {/* header */}
       <motion.div
-        className="z-10 mb-8 flex flex-col items-center justify-center text-center md:mb-12"
+        className="z-10 mb-8 flex flex-col items-center text-center md:mb-12"
         variants={topElementVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* Logo with Modal trigger - No need to add custom trigger */}
-        <div className="relative cursor-pointer transition-transform">
-          <WelcomeModal />
-        </div>
+        <WelcomeModal />
 
-        <h2 className="text-secondary-foreground text-xl font-semibold md:text-2xl dark:text-neutral-300">
+        <h2 className="text-secondary-foreground mt-3 text-xl font-semibold md:text-2xl">
           Hey, I'm Raphael 👋
         </h2>
-        <h1 className="bg-background mt-3 text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-          World&apos;s First AI Portfolio
+        <h1 className="bg-background text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+          World's first AI portfolio
         </h1>
       </motion.div>
 
-      {/* Center memoji (stable) */}
+      {/* centre memoji */}
       <div className="relative z-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72">
         <Image
           src="/landing-memojis.png"
+          alt="Hero memoji"
           width={2000}
           height={2000}
-          alt="Hero"
-          className="translate-y-14 scale-[2] object-cover"
           priority
+          className="translate-y-14 scale-[2] object-cover"
         />
       </div>
 
-      {/* Bottom elements (coming from bottom) */}
+      {/* input + quick buttons */}
       <motion.div
         variants={bottomElementVariants}
         initial="hidden"
         animate="visible"
-        className="z-10 w-full max-w-lg md:px-0 mt-4"
+        className="z-10 mt-4 flex w-full flex-col items-center justify-center md:px-0"
       >
-        <form onSubmit={handleSubmit} className="relative w-full">
+        {/* free-form question */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (input.trim()) goToChat(input.trim());
+          }}
+          className="relative w-full max-w-lg"
+        >
           <div className="mx-auto flex items-center rounded-full border border-neutral-200 bg-neutral-100 py-2.5 pr-2 pl-6 transition-all hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600">
             <input
               ref={inputRef}
               type="text"
               value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyPress}
-              placeholder="Who are you?"
-              className="w-full border-none bg-transparent text-base text-neutral-800 placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none dark:text-neutral-200 dark:placeholder:text-neutral-500"
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask me anything…"
+              className="w-full border-none bg-transparent text-base text-neutral-800 placeholder:text-neutral-500 focus:outline-none dark:text-neutral-200 dark:placeholder:text-neutral-500"
             />
-
             <button
               type="submit"
               disabled={!input.trim()}
-              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
               aria-label="Submit question"
+              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               <ArrowRight className="h-5 w-5" />
             </button>
           </div>
         </form>
+
+        {/* quick-question grid */}
+        <div className="mt-4 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-5">
+          {questionConfig.map(({ key, color, icon: Icon }) => (
+            <Button
+              key={key}
+              onClick={() => goToChat(questions[key])}
+              variant="outline"
+              className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/1 py-8 shadow-none backdrop-blur-sm  active:scale-95 md:p-10"
+            >
+              <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-700">
+                <Icon size={22} strokeWidth={2} color={color} />
+                <span className="text-xs font-medium sm:text-sm">{key}</span>
+              </div>
+            </Button>
+          ))}
+        </div>
       </motion.div>
     </div>
   );

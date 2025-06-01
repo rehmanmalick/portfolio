@@ -280,16 +280,15 @@ const Chat = () => {
           className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
         >
           <div className="flex justify-center">
-            <div className="relative cursor-pointer">
+            <div
+              className="relative cursor-pointer"
+              onClick={() => (window.location.href = '/')}
+            >
               <ClientOnly>
-                <WelcomeModal
-                  trigger={
-                    <Avatar
-                      hasActiveTool={hasActiveTool}
-                      videoRef={videoRef}
-                      isTalking={isTalking}
-                    />
-                  }
+                <Avatar
+                  hasActiveTool={hasActiveTool}
+                  videoRef={videoRef}
+                  isTalking={isTalking}
                 />
               </ClientOnly>
             </div>

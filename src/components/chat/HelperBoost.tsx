@@ -230,7 +230,7 @@ export default function HelperBoost({
                         >
                           <div className="flex items-center gap-3 text-gray-700">
                             <CircleEllipsis
-                              className="h-[18px] w-[18px]"
+                              className="h-[20px] w-[18px]"
                               //style={{ color: '#3B82F6' }}
                               strokeWidth={2}
                             />
