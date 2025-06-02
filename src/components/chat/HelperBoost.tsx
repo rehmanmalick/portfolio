@@ -201,7 +201,7 @@ export default function HelperBoost({
           {isVisible && (
             <div className="w-full">
               <div
-                className=" flex w-full flex-wrap gap-1 md:gap-3"
+                className="flex w-full flex-wrap gap-1 md:gap-3"
                 style={{ justifyContent: 'safe center' }}
               >
                 {questionConfig.map(({ key, color, icon: Icon }) => (

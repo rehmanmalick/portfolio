@@ -117,7 +117,7 @@ export const Carousel = ({
         >
           <div
             className={cn(
-              'absolute right-0 z-[1000] h-auto w-[5%] overflow-hidden bg-gradient-to-l'
+              'absolute right-0 z-[10] h-auto w-[5%] overflow-hidden bg-gradient-to-l'
             )}
           ></div>
 
@@ -218,7 +218,7 @@ export const Card = ({
     <>
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-50 h-screen overflow-auto">
+          <div className="fixed inset-0 z-52 h-screen overflow-auto">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -234,7 +234,7 @@ export const Card = ({
               className="relative z-[60] mx-auto my-10 h-fit max-w-5xl rounded-3xl bg-white font-sans dark:bg-neutral-900"
             >
               {/* Sticky close button */}
-              <div className="sticky top-4 z-50 flex justify-end px-8 pt-8 md:px-14 md:pt-8">
+              <div className="sticky top-4 z-52 flex justify-end px-8 pt-8 md:px-14 md:pt-8">
                 <button
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-black/90 shadow-md dark:bg-white/90"
                   onClick={handleClose}
