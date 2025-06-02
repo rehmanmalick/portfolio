@@ -77,24 +77,29 @@ const Avatar = dynamic<AvatarProps>(
         <div
           className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
         >
-          {isIOS() ? (
-            <img
-              src="/landing-memojis.png"
-              alt="iOS avatar"
-              className="h-full w-full scale-[2.5] object-contain"
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              className="h-full w-full scale-[2.5] object-contain"
-              muted
-              playsInline
-              loop
-            >
-              <source src="/final_memojis.webm" type="video/webm" />
-              <source src="/final_memojis_ios.mp4" type="video/mp4" />
-            </video>
-          )}
+          <div
+            className="relative cursor-pointer"
+            onClick={() => (window.location.href = '/')}
+          >
+            {isIOS() ? (
+              <img
+                src="/landing-memojis.png"
+                alt="iOS avatar"
+                className="h-full w-full scale-[2.5] object-contain"
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                className="h-full w-full scale-[2.5] object-contain"
+                muted
+                playsInline
+                loop
+              >
+                <source src="/final_memojis.webm" type="video/webm" />
+                <source src="/final_memojis_ios.mp4" type="video/mp4" />
+              </video>
+            )}
+          </div>
         </div>
       );
     }),
@@ -290,18 +295,13 @@ const Chat = () => {
           className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
         >
           <div className="flex justify-center">
-            <div
-              className="relative cursor-pointer"
-              onClick={() => (window.location.href = '/')}
-            >
-              <ClientOnly>
-                <Avatar
-                  hasActiveTool={hasActiveTool}
-                  videoRef={videoRef}
-                  isTalking={isTalking}
-                />
-              </ClientOnly>
-            </div>
+            <ClientOnly>
+              <Avatar
+                hasActiveTool={hasActiveTool}
+                videoRef={videoRef}
+                isTalking={isTalking}
+              />
+            </ClientOnly>
           </div>
 
           <AnimatePresence>
