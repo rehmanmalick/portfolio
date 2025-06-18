@@ -14,6 +14,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import GitHubButton from 'react-github-btn';
 
 /* ---------- quick-question data ---------- */
 const questions = {
@@ -91,6 +92,19 @@ export default function Home() {
         </div>
       </div>
 
+      {/* GitHub button */}
+      <div className="absolute top-6 right-8 z-20">
+        <GitHubButton
+          href="https://github.com/toukoum/portfolio"
+          data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;"
+          data-size="large"
+          data-show-count="true"
+          aria-label="Star toukoum/portfolio on GitHub"
+        >
+          Star
+        </GitHubButton>
+      </div>
+
       {/* header */}
       <motion.div
         className="z-10 mb-8 flex flex-col items-center text-center md:mb-12"
@@ -100,7 +114,7 @@ export default function Home() {
       >
         <WelcomeModal />
 
-        <h2 className="text-secondary-foreground mt-3 text-xl font-semibold md:text-2xl">
+        <h2 className="text-secondary-foreground mt-1 text-xl font-semibold md:text-2xl">
           Hey, I'm Raphael 👋
         </h2>
         <h1 className="bg-background text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">

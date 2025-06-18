@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/chat/chat-bubble';
 import WelcomeModal from '@/components/welcome-modal';
 import { Info } from 'lucide-react';
+import GitHubButton from 'react-github-btn';
 import HelperBoost from './HelperBoost';
 
 // ClientOnly component for client-side rendering
@@ -75,7 +76,7 @@ const Avatar = dynamic<AvatarProps>(
       // Conditional rendering based on detection
       return (
         <div
-          className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-24 w-24' : 'h-32 w-32'}`}
+          className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-20 w-20' : 'h-28 w-28'}`}
         >
           <div
             className="relative cursor-pointer"
@@ -85,12 +86,12 @@ const Avatar = dynamic<AvatarProps>(
               <img
                 src="/landing-memojis.png"
                 alt="iOS avatar"
-                className="h-full w-full scale-[2.5] object-contain"
+                className="h-full w-full scale-[1.8] object-contain"
               />
             ) : (
               <video
                 ref={videoRef}
-                className="h-full w-full scale-[2.5] object-contain"
+                className="h-full w-full scale-[1.8] object-contain"
                 muted
                 playsInline
                 loop
@@ -275,13 +276,26 @@ const Chat = () => {
 
   return (
     <div className="relative h-screen overflow-hidden">
-      <WelcomeModal
-        trigger={
-          <div className="hover:bg-accent absolute top-6 right-8 z-51 cursor-pointer rounded-2xl px-4 py-2">
-            <Info className="text-accent-foreground h-8" />
-          </div>
-        }
-      />
+      <div className="absolute top-6 right-8 z-51 flex flex-col-reverse items-center justify-center gap-1 md:flex-row">
+        <WelcomeModal
+          trigger={
+            <div className=" hover:bg-accent cursor-pointer rounded-2xl px-3 py-1.5">
+              <Info className="text-accent-foreground h-8" />
+            </div>
+          }
+        />
+        <div className="pt-2">
+          <GitHubButton
+            href="https://github.com/toukoum/portfolio"
+            data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;"
+            data-size="large"
+            data-show-count="true"
+            aria-label="Star toukoum/portfolio on GitHub"
+          >
+            Star
+          </GitHubButton>
+        </div>
+      </div>
 
       {/* Fixed Avatar Header with Gradient */}
       <div
@@ -308,7 +322,7 @@ const Chat = () => {
             {latestUserMessage && !currentAIMessage && (
               <motion.div
                 {...MOTION_CONFIG}
-                className="mx-auto flex max-w-3xl px-4 pt-4"
+                className="mx-auto flex max-w-3xl px-4"
               >
                 <ChatBubble variant="sent">
                   <ChatBubbleMessage>
@@ -368,7 +382,7 @@ const Chat = () => {
         </div>
 
         {/* Fixed Bottom Bar */}
-        <div className="sticky bottom-0 bg-white pt-3 pb-4">
+        <div className="sticky bottom-0 bg-white pt-3 px-2 md:px-0 pb-4">
           <div className="relative flex flex-col items-center gap-3">
             <HelperBoost submitQuery={submitQuery} setInput={setInput} />
             <ChatBottombar
