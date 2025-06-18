@@ -27,7 +27,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
   const defaultTrigger = (
     <Button
       variant="ghost"
-      className="hover:bg-accent h-auto w-auto cursor-pointer rounded-2xl p-4 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+      className="h-auto w-auto cursor-pointer rounded-2xl bg-white/30 p-3 backdrop-blur-lg hover:bg-white/60 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
       onClick={() => setIsOpen(true)}
     >
       <Image
@@ -58,7 +58,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
       )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="z-52 bg-background max-h-[85vh] overflow-auto rounded-2xl border-none p-4 py-6 shadow-xl sm:max-w-[85vw] md:max-w-[80vw] lg:max-w-[1000px]">
+        <DialogContent className="bg-background z-52 max-h-[85vh] overflow-auto rounded-2xl border-none p-4 py-6 shadow-xl sm:max-w-[85vw] md:max-w-[80vw] lg:max-w-[1000px]">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -99,8 +99,6 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
                     <strong>brand new AI Portfolio.</strong>
                     <br /> Whether you're a recruiter, a friend, family member,
                     or just curious, feel free to ask anything you want!
-                    <br /> You can inquire about my projects, skills, education,
-                    or even my personal interests.
                   </p>
                 </div>
 
@@ -111,8 +109,8 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
                   </h3>
                   <p className="text-accent-foreground text-base leading-relaxed">
                     Traditional portfolios can be limiting. <br /> They can't
-                    adapt to every visitor's specific needs. <br /> With this AI
-                    approach, my portfolio becomes{' '}
+                    adapt to every visitor's specific needs. <br /> My portfolio
+                    becomes{' '}
                     <strong>
                       exactly what you're interested in knowing about me and my
                       work.

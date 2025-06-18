@@ -1,5 +1,6 @@
 'use client';
 
+import FluidCursor from '@/components/FluidCursor';
 import { Button } from '@/components/ui/button';
 import WelcomeModal from '@/components/welcome-modal';
 import { motion } from 'framer-motion';
@@ -107,17 +108,19 @@ export default function Home() {
 
       {/* header */}
       <motion.div
-        className="z-10 mb-8 flex flex-col items-center text-center md:mb-12"
+        className="z-1 mb-8 flex flex-col items-center text-center md:mb-12"
         variants={topElementVariants}
         initial="hidden"
         animate="visible"
       >
-        <WelcomeModal />
+        <div className="z-100">
+          <WelcomeModal />
+        </div>
 
         <h2 className="text-secondary-foreground mt-1 text-xl font-semibold md:text-2xl">
           Hey, I'm Raphael 👋
         </h2>
-        <h1 className="bg-background text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
           AI portfolio
         </h1>
       </motion.div>
@@ -149,7 +152,7 @@ export default function Home() {
           }}
           className="relative w-full max-w-lg"
         >
-          <div className="mx-auto flex items-center rounded-full border border-neutral-200 bg-neutral-100 py-2.5 pr-2 pl-6 transition-all hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600">
+          <div className="mx-auto flex items-center rounded-full border border-neutral-200 bg-white/30 py-2.5 pr-2 pl-6 backdrop-blur-lg transition-all hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600">
             <input
               ref={inputRef}
               type="text"
@@ -162,7 +165,7 @@ export default function Home() {
               type="submit"
               disabled={!input.trim()}
               aria-label="Submit question"
-              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
+              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-70 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               <ArrowRight className="h-5 w-5" />
             </button>
@@ -176,7 +179,7 @@ export default function Home() {
               key={key}
               onClick={() => goToChat(questions[key])}
               variant="outline"
-              className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/1 py-8 shadow-none backdrop-blur-sm active:scale-95 md:p-10"
+              className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 shadow-none backdrop-blur-lg active:scale-95 md:p-10"
             >
               <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-700">
                 <Icon size={22} strokeWidth={2} color={color} />
@@ -186,6 +189,7 @@ export default function Home() {
           ))}
         </div>
       </motion.div>
+      <FluidCursor />
     </div>
   );
 }
