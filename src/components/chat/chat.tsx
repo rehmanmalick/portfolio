@@ -382,7 +382,7 @@ const Chat = () => {
         </div>
 
         {/* Fixed Bottom Bar */}
-        <div className="sticky bottom-0 bg-white pt-3 px-2 md:px-0 pb-4">
+        <div className="sticky bottom-0 bg-white pt-3 px-2 md:px-0 md:pb-4">
           <div className="relative flex flex-col items-center gap-3">
             <HelperBoost submitQuery={submitQuery} setInput={setInput} />
             <ChatBottombar
