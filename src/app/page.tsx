@@ -140,7 +140,7 @@ export default function Home() {
       </motion.div>
 
       {/* centre memoji */}
-      <div className="relative z-10 h-64 w-64 overflow-hidden sm:h-72 sm:w-72">
+      <div className="relative z-10 h-52 w-48 overflow-hidden sm:h-72 sm:w-72">
         <Image
           src="/landing-memojis.png"
           alt="Hero memoji"
