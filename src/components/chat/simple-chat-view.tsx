@@ -1,12 +1,12 @@
 'use client';
 
-import { Message } from 'ai/react';
-import { motion } from 'framer-motion';
-import { ChatRequestOptions } from 'ai';
 import {
   ChatBubble,
   ChatBubbleMessage,
 } from '@/components/ui/chat/chat-bubble';
+import { ChatRequestOptions } from 'ai';
+import { Message } from 'ai/react';
+import { motion } from 'framer-motion';
 import ChatMessageContent from './chat-message-content';
 import ToolRenderer from './tool-renderer';
 
@@ -55,6 +55,8 @@ export function SimplifiedChatView({
 
   const hasTextContent = message.content.trim().length > 0;
   const hasTools = currentTool.length > 0;
+
+  console.log('currentTool', currentTool);
 
   return (
     <motion.div {...MOTION_CONFIG} className="flex h-full w-full flex-col px-4">

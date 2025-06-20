@@ -27,7 +27,7 @@ export default function WelcomeModal({ trigger }: WelcomeModalProps) {
   const defaultTrigger = (
     <Button
       variant="ghost"
-      className="h-auto w-auto cursor-pointer rounded-2xl bg-white/30 p-3 backdrop-blur-lg hover:bg-white/60 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+      className="h-auto w-auto cursor-pointer rounded-2xl bg-white/30 p-3 shadow-lg backdrop-blur-lg hover:bg-white/60 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
       onClick={() => setIsOpen(true)}
     >
       <Image

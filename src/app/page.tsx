@@ -106,9 +106,23 @@ export default function Home() {
         </GitHubButton>
       </div>
 
+      <div className="absolute top-6 left-6 z-20">
+        <button
+          onClick={() => goToChat('Are you looking for an internship?')}
+          className="cursor-pointer relative flex items-center gap-2 rounded-full border bg-white/30 px-4 py-1.5 text-sm font-medium text-black shadow-md backdrop-blur-lg transition hover:bg-white/60 dark:border-white dark:text-white dark:hover:bg-neutral-800"
+        >
+          {/* Green pulse dot */}
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+          </span>
+          need an intern?
+        </button>
+      </div>
+
       {/* header */}
       <motion.div
-        className="z-1 mb-8 flex flex-col items-center text-center md:mb-12"
+        className="z-1 mb-8 flex flex-col items-center text-center md:mb-12 mt-24 md:mt-4"
         variants={topElementVariants}
         initial="hidden"
         animate="visible"
@@ -179,7 +193,7 @@ export default function Home() {
               key={key}
               onClick={() => goToChat(questions[key])}
               variant="outline"
-              className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 shadow-none backdrop-blur-lg active:scale-95 md:p-10"
+              className="shadow-none border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 backdrop-blur-lg active:scale-95 md:p-10"
             >
               <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-700">
                 <Icon size={22} strokeWidth={2} color={color} />
