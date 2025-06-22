@@ -279,7 +279,7 @@ const Chat = () => {
       <div className="absolute top-6 right-8 z-51 flex flex-col-reverse items-center justify-center gap-1 md:flex-row">
         <WelcomeModal
           trigger={
-            <div className=" hover:bg-accent cursor-pointer rounded-2xl px-3 py-1.5">
+            <div className="hover:bg-accent cursor-pointer rounded-2xl px-3 py-1.5">
               <Info className="text-accent-foreground h-8" />
             </div>
           }
@@ -382,7 +382,7 @@ const Chat = () => {
         </div>
 
         {/* Fixed Bottom Bar */}
-        <div className="sticky bottom-0 bg-white pt-3 px-2 md:px-0 md:pb-4">
+        <div className="sticky bottom-0 bg-white px-2 pt-3 md:px-0 md:pb-4">
           <div className="relative flex flex-col items-center gap-3">
             <HelperBoost submitQuery={submitQuery} setInput={setInput} />
             <ChatBottombar
@@ -395,6 +395,14 @@ const Chat = () => {
             />
           </div>
         </div>
+        <a
+          href="https://x.com/toukoumcode"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed right-3 bottom-0 z-10 mb-4 hidden cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm hover:underline md:block"
+        >
+          @toukoum
+        </a>
       </div>
     </div>
   );
