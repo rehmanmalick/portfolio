@@ -107,9 +107,9 @@ const InternshipCard = () => {
         </p>
         <p className="text-foreground text-sm">
           Real-world AI dev experience from Lighton (MCP, secure GPTs, RAG
-          pipelines). 3x hackathon wins (ETH Oxford, Paris Blockchain Week,
-          Colosseum Breakout on Solana). I ship fast, and love building useful
-          things that actually work.
+          pipelines). <br /> 3x hackathon wins (ETH Oxford, Paris Blockchain
+          Week, Colosseum Breakout on Solana). <br /> I ship fast, and love
+          building useful things that actually work.
         </p>
       </div>
 
@@ -127,7 +127,7 @@ const InternshipCard = () => {
       <div className="mt-10 flex justify-center">
         <button
           onClick={openMail}
-          className="rounded-full bg-black px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-zinc-800"
+          className="cursor-pointer rounded-full bg-black px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-zinc-800"
         >
           Contact me
         </button>
