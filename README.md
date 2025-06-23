@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+![image](assets/readme-photo.png)
+ 
+# World's first AI portfolio 🤖✨  
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Static portfolios are dead.**  
+So I built [toukoum.fr](https://toukoum.fr).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Instead of making you scroll endlessly, my portfolio adapts to *you*.  
+Ask a question — my AI avatar replies instantly.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 👇 What can you ask?
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🧠 **Tech recruiter?** Ask about my stack & results  
+- 💻 **Dev?** Dive into my code & mindset  
+- 🧑‍🤝‍🧑 **Friend or family?** See what I’ve been working on  
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+This is not a portfolio.  
+It’s a **conversation tailored to your curiosity**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+➡️ **Try it now:** [https://toukoum.fr](https://toukoum.fr)  
+*What will you ask?*
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 🔖 Tags
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`#AIPortfolio` `#InnovationInTech` `#DigitalResume` `#JobSearch` `#TechInnovation` `#WebDevelopment` `#FutureTech`
