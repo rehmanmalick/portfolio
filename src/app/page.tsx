@@ -24,7 +24,7 @@ const questions = {
   Skills: 'What are your skills? Give me a list of your soft and hard skills.',
   Fun: 'What’s the craziest thing you’ve ever done? What are your hobbies?',
   Contact:
-    'How can I reach you? What kind of project would make you say "yes" immediately?',
+    'How can I contact you?',
 } as const;
 
 const questionConfig = [
