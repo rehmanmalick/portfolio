@@ -26,7 +26,18 @@ const Skills = () => {
     {
       category: 'Backend & Systems',
       icon: <Cpu className="h-5 w-5" />,
-      skills: ['Unix', 'C', 'C++', 'Python', 'Git', 'GitHub', 'Docker', 'GCP', 'PostgreSQL'],
+      skills: [
+        'Unix',
+        'C',
+        'C++',
+        'Python',
+        'Typescript',
+        'Git',
+        'GitHub',
+        'Docker',
+        'GCP',
+        'PostgreSQL',
+      ],
       color: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
     },
     {
@@ -48,6 +59,24 @@ const Skills = () => {
         'Focus',
       ],
       color: 'bg-amber-50 text-amber-600 border border-amber-200',
+    },
+    {
+      category: 'AI & Fullstack Engineering',
+      icon: <Cpu className="h-5 w-5" />,
+      skills: [
+        'LLM Providers (ChatGPT, Whisper, Groq, Mistral & Claude)',
+        'AI Agents',
+        'Prompt engineering',
+        'Vector databases (Weaviate, Pinecone)',
+        'RAG (Retrieval-Augmented Generation)',
+        'Tool routing & calling',
+        'Hugging Face Transformers',
+        'Vercel AI SDK',
+        'Supabase',
+        'Prisma',
+        'Next.js',
+      ],
+      color: 'bg-purple-50 text-purple-600 border border-purple-200',
     },
   ];
 
@@ -87,14 +116,14 @@ const Skills = () => {
       transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
       className="mx-auto w-full max-w-5xl rounded-4xl"
     >
-      <Card className="w-full shadow-none border-none pb-12 px-0">
-        <CardHeader className="pb-1 px-0">
-          <CardTitle className="text-primary text-4xl font-bold px-0">
+      <Card className="w-full border-none px-0 pb-12 shadow-none">
+        <CardHeader className="px-0 pb-1">
+          <CardTitle className="text-primary px-0 text-4xl font-bold">
             Skills & Expertise
           </CardTitle>
         </CardHeader>
 
-        <CardContent className='px-0'>
+        <CardContent className="px-0">
           <motion.div
             className="space-y-8 px-0"
             variants={containerVariants}
@@ -129,9 +158,7 @@ const Skills = () => {
                         transition: { duration: 0.2 },
                       }}
                     >
-                      <Badge
-                        className={`border px-3 py-1.5 font-normal`}
-                      >
+                      <Badge className={`border px-3 py-1.5 font-normal`}>
                         {skill}
                       </Badge>
                     </motion.div>

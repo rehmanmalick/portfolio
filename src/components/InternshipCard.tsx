@@ -2,11 +2,13 @@
 
 import { motion } from 'framer-motion';
 import { CalendarDays, Code2, Globe } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const InternshipCard = () => {
   const openMail = () => {
     window.open('mailto:raphaelgiraud12@gmail.com', '_blank');
   };
+  const router = useRouter();
 
   return (
     <motion.div
@@ -88,7 +90,7 @@ const InternshipCard = () => {
                 <li>Hackathons + AI agent workflows</li>
                 <li>
                   <a
-                    href="http://localhost:3000/chat?query=What%20are%20your%20skills%3F%20Give%20me%20a%20list%20of%20your%20soft%20and%20hard%20skills."
+                    href="/chat?query=What%20are%20your%20skills%3F%20Give%20me%20a%20list%20of%20your%20soft%20and%20hard%20skills."
                     className="cursor-pointer items-center text-blue-500 underline"
                   >
                     See more
