@@ -95,10 +95,9 @@ export default function Home() {
       {/* GitHub button */}
       <div className="absolute top-6 right-8 z-20">
         <GithubButton
-          targetStars={71}
+          targetStars={68}
           animationDuration={1.5}
           label="Star"
-          variant={'outline'}
           size={'sm'}
           repoUrl="https://github.com/toukoum/portfolio"
         />
