@@ -95,7 +95,7 @@ export default function Home() {
       {/* GitHub button */}
       <div className="absolute top-6 right-8 z-20">
         <GithubButton
-          targetStars={68}
+          //targetStars={68}
           animationDuration={1.5}
           label="Star"
           size={'sm'}

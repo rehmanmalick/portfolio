@@ -29,43 +29,25 @@ const githubButtonVariants = cva(
 );
 
 interface GithubButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof githubButtonVariants> {
-  /** Whether to round stars */
   roundStars?: boolean;
-  /** Whether to show Github icon */
   fixedWidth?: boolean;
-  /** Initial number of stars */
   initialStars?: number;
-  /** Class for stars */
   starsClass?: string;
-  /** Target number of stars to animate to */
-  targetStars?: number;
-  /** Animation duration in seconds */
   animationDuration?: number;
-  /** Animation delay in seconds */
   animationDelay?: number;
-  /** Whether to start animation automatically */
   autoAnimate?: boolean;
-  /** Callback when animation completes */
   onAnimationComplete?: () => void;
-  /** Whether to show Github icon */
   showGithubIcon?: boolean;
-  /** Whether stars should be filled */
   filled?: boolean;
-  /** Repository URL for actual Github integration */
   repoUrl?: string;
-  /** Button text label */
   label?: string;
-  /** Use in-view detection to trigger animation */
   useInViewTrigger?: boolean;
-  /** In-view options */
   inViewOptions?: UseInViewOptions;
-  /** Spring transition options */
   transition?: SpringOptions;
 }
 
 function GithubButton({
   initialStars = 0,
-  targetStars = 0,
   starsClass = '',
   fixedWidth = true,
   animationDuration = 2,
@@ -85,54 +67,63 @@ function GithubButton({
   transition,
   ...props
 }: GithubButtonProps) {
+  const [targetStars, setTargetStars] = useState<number | null>(null);
   const [currentStars, setCurrentStars] = useState(initialStars);
   const [isAnimating, setIsAnimating] = useState(false);
   const [starProgress, setStarProgress] = useState(filled ? 100 : 0);
   const [hasAnimated, setHasAnimated] = useState(false);
 
-  // Format number with units
   const formatNumber = (num: number) => {
     const units = ['k', 'M', 'B', 'T'];
-
     if (roundStars && num >= 1000) {
       let unitIndex = -1;
       let value = num;
-
       while (value >= 1000 && unitIndex < units.length - 1) {
         value /= 1000;
         unitIndex++;
       }
-
-      // Format to 1 decimal place if needed, otherwise show whole number
       const formatted = value % 1 === 0 ? value.toString() : value.toFixed(1);
       return `${formatted}${units[unitIndex]}`;
     }
-
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  // Start animation
+  // Fetch stars from GitHub API
+  useEffect(() => {
+    if (!repoUrl) return;
+
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/?#]+)/);
+    if (!match) return;
+
+    const [, owner, repo] = match;
+
+    fetch(`https://api.github.com/repos/${owner}/${repo}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.stargazers_count === 'number') {
+          setTargetStars(data.stargazers_count);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch GitHub stars:', err);
+      });
+  }, [repoUrl]);
+
   const startAnimation = useCallback(() => {
-    if (isAnimating || hasAnimated) return;
+    if (isAnimating || hasAnimated || targetStars === null) return;
 
     setIsAnimating(true);
     const startTime = Date.now();
-    const startValue = 0; // Always start from 0 for number animation
+    const startValue = 0;
     const endValue = targetStars;
     const duration = animationDuration * 1000;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function for smooth animation
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-
-      // Update star count from 0 to target with more frequent updates
       const newStars = Math.round(startValue + (endValue - startValue) * easeOutQuart);
       setCurrentStars(newStars);
-
-      // Update star fill progress (0 to 100)
       setStarProgress(progress * 100);
 
       if (progress < 1) {
@@ -150,12 +141,11 @@ function GithubButton({
     }, animationDelay * 1000);
   }, [isAnimating, hasAnimated, targetStars, animationDuration, animationDelay]);
 
-  // Use in-view detection if enabled
   const ref = React.useRef(null);
   const isInView = useInView(ref, inViewOptions);
 
-  // Auto-start animation or use in-view trigger
   useEffect(() => {
+    if (targetStars === null) return;
     if (useInViewTrigger) {
       if (isInView && !hasAnimated) {
         startAnimation();
@@ -163,31 +153,22 @@ function GithubButton({
     } else if (autoAnimate && !hasAnimated) {
       startAnimation();
     }
-  }, [autoAnimate, useInViewTrigger, isInView, hasAnimated, startAnimation]);
+  }, [autoAnimate, useInViewTrigger, isInView, hasAnimated, startAnimation, targetStars]);
 
   const navigateToRepo = () => {
-    if (!repoUrl) {
-      return;
-    }
-
-    // Next.js compatible navigation approach
+    if (!repoUrl) return;
     try {
-      // Create a temporary anchor element for reliable navigation
       const link = document.createElement('a');
       link.href = repoUrl;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
-
-      // Temporarily add to DOM and click
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch {
-      // Fallback to window.open
       try {
         window.open(repoUrl, '_blank', 'noopener,noreferrer');
       } catch {
-        // Final fallback
         window.location.href = repoUrl;
       }
     }
@@ -198,7 +179,6 @@ function GithubButton({
       onClick(event);
       return;
     }
-
     if (repoUrl) {
       navigateToRepo();
     } else if (!hasAnimated) {
@@ -207,10 +187,8 @@ function GithubButton({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    // Handle Enter and Space key presses for accessibility
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-
       if (repoUrl) {
         navigateToRepo();
       } else if (!hasAnimated) {
@@ -238,7 +216,6 @@ function GithubButton({
 
       <span>{label}</span>
 
-      {/* Animated Star Icon */}
       <div className="relative inline-flex shrink-0">
         <Star className="fill-muted-foreground text-muted-foreground" aria-hidden="true" />
         <Star
@@ -251,7 +228,6 @@ function GithubButton({
         />
       </div>
 
-      {/* Animated Number Counter with Ticker Effect */}
       <div className={cn('flex flex-col font-semibold relative overflow-hidden', starsClass)}>
         <motion.div
           animate={{ opacity: 1 }}
@@ -265,7 +241,11 @@ function GithubButton({
         >
           <span>{currentStars > 0 && formatNumber(currentStars)}</span>
         </motion.div>
-        {fixedWidth && <span className="opacity-0 h-0 overflow-hidden tabular-nums">{formatNumber(targetStars)}</span>}
+        {fixedWidth && (
+          <span className="opacity-0 h-0 overflow-hidden tabular-nums">
+            {targetStars !== null ? formatNumber(targetStars) : ''}
+          </span>
+        )}
       </div>
     </button>
   );
