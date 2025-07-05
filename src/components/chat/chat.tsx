@@ -19,6 +19,7 @@ import WelcomeModal from '@/components/welcome-modal';
 import { Info } from 'lucide-react';
 import GitHubButton from 'react-github-btn';
 import HelperBoost from './HelperBoost';
+import { GithubButton } from '../ui/github-button';
 
 // ClientOnly component for client-side rendering
 //@ts-ignore
@@ -284,16 +285,13 @@ const Chat = () => {
             </div>
           }
         />
-        <div className="pt-2">
-          <GitHubButton
-            href="https://github.com/toukoum/portfolio"
-            data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;"
-            data-size="large"
-            data-show-count="true"
-            aria-label="Star toukoum/portfolio on GitHub"
-          >
-            Star
-          </GitHubButton>
+        <div className="">
+          <GithubButton
+          animationDuration={1.5}
+          label="Star"
+          size={'sm'}
+          repoUrl="https://github.com/toukoum/portfolio"
+        />
         </div>
       </div>
 

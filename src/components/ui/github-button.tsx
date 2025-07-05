@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Star } from 'lucide-react';
-import { motion, useInView, type SpringOptions, type UseInViewOptions } from 'motion/react';
-import { cn } from '@/lib/utils';
+import {
+  motion,
+  useInView,
+  type SpringOptions,
+  type UseInViewOptions,
+} from 'motion/react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const githubButtonVariants = cva(
   'cursor-pointer relative overflow-hidden will-change-transform backface-visibility-hidden transform-gpu transition-transform duration-200 ease-out hover:scale-105 group whitespace-nowrap focus-visible:outline-hidden inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background disabled:pointer-events-none disabled:opacity-60 [&_svg]:shrink-0',
@@ -13,10 +18,12 @@ const githubButtonVariants = cva(
       variant: {
         default:
           'bg-zinc-950 hover:bg-zinc-900 text-white border-gray-700 dark:bg-zinc-50 dark:border-gray-300 dark:text-zinc-950 dark:hover:bg-zinc-50',
-        outline: 'bg-background text-accent-foreground border border-input hover:bg-accent',
+        outline:
+          'bg-background text-accent-foreground border border-input hover:bg-accent',
       },
       size: {
-        default: 'h-8.5 rounded-md px-3 gap-2 text-[0.8125rem] leading-none [&_svg]:size-4 gap-2',
+        default:
+          'h-8.5 rounded-md px-3 gap-2 text-[0.8125rem] leading-none [&_svg]:size-4 gap-2',
         sm: 'h-7 rounded-md px-2.5 gap-1.5 text-xs leading-none [&_svg]:size-3.5 gap-1.5',
         lg: 'h-10 rounded-md px-4 gap-2.5 text-sm leading-none [&_svg]:size-5 gap-2.5',
       },
@@ -25,10 +32,12 @@ const githubButtonVariants = cva(
       variant: 'default',
       size: 'default',
     },
-  },
+  }
 );
 
-interface GithubButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof githubButtonVariants> {
+interface GithubButtonProps
+  extends React.ComponentProps<'button'>,
+    VariantProps<typeof githubButtonVariants> {
   roundStars?: boolean;
   fixedWidth?: boolean;
   initialStars?: number;
@@ -90,24 +99,10 @@ function GithubButton({
 
   // Fetch stars from GitHub API
   useEffect(() => {
-    if (!repoUrl) return;
-
-    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/?#]+)/);
-    if (!match) return;
-
-    const [, owner, repo] = match;
-
-    fetch(`https://api.github.com/repos/${owner}/${repo}`)
+    fetch('/api/github-stars')
       .then((res) => res.json())
-      .then((data) => {
-        if (typeof data.stargazers_count === 'number') {
-          setTargetStars(data.stargazers_count);
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to fetch GitHub stars:', err);
-      });
-  }, [repoUrl]);
+      .then((data) => setTargetStars(data.stars));
+  }, []);
 
   const startAnimation = useCallback(() => {
     if (isAnimating || hasAnimated || targetStars === null) return;
@@ -122,7 +117,9 @@ function GithubButton({
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const newStars = Math.round(startValue + (endValue - startValue) * easeOutQuart);
+      const newStars = Math.round(
+        startValue + (endValue - startValue) * easeOutQuart
+      );
       setCurrentStars(newStars);
       setStarProgress(progress * 100);
 
@@ -139,7 +136,13 @@ function GithubButton({
     setTimeout(() => {
       requestAnimationFrame(animate);
     }, animationDelay * 1000);
-  }, [isAnimating, hasAnimated, targetStars, animationDuration, animationDelay]);
+  }, [
+    isAnimating,
+    hasAnimated,
+    targetStars,
+    animationDuration,
+    animationDelay,
+  ]);
 
   const ref = React.useRef(null);
   const isInView = useInView(ref, inViewOptions);
@@ -153,7 +156,14 @@ function GithubButton({
     } else if (autoAnimate && !hasAnimated) {
       startAnimation();
     }
-  }, [autoAnimate, useInViewTrigger, isInView, hasAnimated, startAnimation, targetStars]);
+  }, [
+    autoAnimate,
+    useInViewTrigger,
+    isInView,
+    hasAnimated,
+    startAnimation,
+    targetStars,
+  ]);
 
   const navigateToRepo = () => {
     if (!repoUrl) return;
@@ -217,9 +227,12 @@ function GithubButton({
       <span>{label}</span>
 
       <div className="relative inline-flex shrink-0">
-        <Star className="fill-muted-foreground text-muted-foreground" aria-hidden="true" />
         <Star
-          className="absolute top-0 start-0 text-yellow-400 fill-yellow-400"
+          className="fill-muted-foreground text-muted-foreground"
+          aria-hidden="true"
+        />
+        <Star
+          className="absolute start-0 top-0 fill-yellow-400 text-yellow-400"
           size={18}
           aria-hidden="true"
           style={{
@@ -228,7 +241,12 @@ function GithubButton({
         />
       </div>
 
-      <div className={cn('flex flex-col font-semibold relative overflow-hidden', starsClass)}>
+      <div
+        className={cn(
+          'relative flex flex-col overflow-hidden font-semibold',
+          starsClass
+        )}
+      >
         <motion.div
           animate={{ opacity: 1 }}
           transition={{
@@ -242,7 +260,7 @@ function GithubButton({
           <span>{currentStars > 0 && formatNumber(currentStars)}</span>
         </motion.div>
         {fixedWidth && (
-          <span className="opacity-0 h-0 overflow-hidden tabular-nums">
+          <span className="h-0 overflow-hidden tabular-nums opacity-0">
             {targetStars !== null ? formatNumber(targetStars) : ''}
           </span>
         )}
