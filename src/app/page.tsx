@@ -132,7 +132,7 @@ export default function Home() {
           Hey, I'm Raphael 👋
         </h2>
         <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-          AI portfolio
+          AI Portfolio
         </h1>
       </motion.div>
 
@@ -178,7 +178,7 @@ export default function Home() {
               aria-label="Submit question"
               className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-70 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight  className="h-5 w-5" />
             </button>
           </div>
         </form>

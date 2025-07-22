@@ -3,7 +3,7 @@
 
 import { ChatRequestOptions } from 'ai';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUp } from 'lucide-react';
 import React, { useEffect } from 'react';
 
 interface ChatBottombarProps {
@@ -78,7 +78,7 @@ export default function ChatBottombar({
               }
             }}
           >
-            <ArrowRight className="h-6 w-6" />
+            <ArrowUp className="h-6 w-6" />
           </button>
         </div>
       </form>
