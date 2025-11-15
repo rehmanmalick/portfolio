@@ -8,4 +8,4 @@ export const getResume = tool({
   execute: async () => {
     return "You can download my resume by clicking on the link above.";
   },
-});
+}as any);

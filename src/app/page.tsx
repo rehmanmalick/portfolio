@@ -1,8 +1,9 @@
 'use client';
 
 import FluidCursor from '@/components/FluidCursor';
+// import ChatTestSimple from '@/components/test';
 import { Button } from '@/components/ui/button';
-import { GithubButton } from '@/components/ui/github-button';
+// import { GithubButton } from '@/components/ui/github-button';
 import WelcomeModal from '@/components/welcome-modal';
 import { motion } from 'framer-motion';
 import {
@@ -88,20 +89,20 @@ export default function Home() {
           className="hidden bg-gradient-to-b from-neutral-500/10 to-neutral-500/0 bg-clip-text text-[10rem] leading-none font-black text-transparent select-none sm:block lg:text-[16rem]"
           style={{ marginBottom: '-2.5rem' }}
         >
-          Toukoum
+          Rehman
         </div>
       </div>
 
       {/* GitHub button */}
-      <div className="absolute top-6 right-8 z-20">
+      {/* <div className="absolute top-6 right-8 z-20">
         <GithubButton
-          //targetStars={68}
+          // targetStars={68}
           animationDuration={1.5}
           label="Star"
           size={'sm'}
-          repoUrl="https://github.com/toukoum/portfolio"
+          repoUrl="https://github.com/rehmanmalick"
         />
-      </div>
+      </div> */}
 
       <div className="absolute top-6 left-6 z-20">
         <button
@@ -120,7 +121,7 @@ export default function Home() {
       {/* header */}
       <motion.div
         className="z-1 mt-24 mb-8 flex flex-col items-center text-center md:mt-4 md:mb-12"
-        variants={topElementVariants}
+        // variants={topElementVariants}
         initial="hidden"
         animate="visible"
       >
@@ -129,7 +130,7 @@ export default function Home() {
         </div>
 
         <h2 className="text-secondary-foreground mt-1 text-xl font-semibold md:text-2xl">
-          Hey, I'm Raphael 👋
+          Hey, I'm Abdul Rehman 👋
         </h2>
         <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
           AI Portfolio
@@ -150,11 +151,12 @@ export default function Home() {
 
       {/* input + quick buttons */}
       <motion.div
-        variants={bottomElementVariants}
+        // variants={bottomElementVariants}
         initial="hidden"
         animate="visible"
         className="z-10 mt-4 flex w-full flex-col items-center justify-center md:px-0"
       >
+        {/* <ChatTestSimple /> */}
         {/* free-form question */}
         <form
           onSubmit={(e) => {

@@ -8,4 +8,4 @@ export const getSkills = tool({
   execute: async () => {
     return "You can see all my skills above.";
   },
-});
+}as any);

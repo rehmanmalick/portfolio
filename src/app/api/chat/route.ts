@@ -1,28 +1,16 @@
-import { openai } from '@ai-sdk/openai';
+// src/app/api/chat/route.ts
+import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { SYSTEM_PROMPT } from './prompt';
 import { getContact } from './tools/getContact';
-import { getCrazy } from './tools/getCrazy';
 import { getInternship } from './tools/getIntership';
-import { getPresentation } from './tools/getPresentation';
-import { getProjects } from './tools/getProjects';
 import { getResume } from './tools/getResume';
 import { getSkills } from './tools/getSkills';
-import { getSports } from './tools/getSport';
 
-export const maxDuration = 30;
-
-// ❌ Pas besoin de l'export ici, Next.js n'aime pas ça
-function errorHandler(error: unknown) {
-  if (error == null) {
-    return 'Unknown error';
-  }
-  if (typeof error === 'string') {
-    return error;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
+function errorHandler(error: unknown): string {
+  if (error == null) return 'Unknown error';
+  if (typeof error === 'string') return error;
+  if (error instanceof Error) return error.message;
   return JSON.stringify(error);
 }
 
@@ -34,30 +22,26 @@ export async function POST(req: Request) {
     messages.unshift(SYSTEM_PROMPT);
 
     const tools = {
-      getProjects,
-      getPresentation,
       getResume,
       getContact,
       getSkills,
-      getSports,
-      getCrazy,
       getInternship,
     };
 
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.error('❌ Missing GOOGLE_GENERATIVE_AI_API_KEY');
+      return new Response('API key not configured', { status: 500 });
+    }
+
     const result = streamText({
-      model: openai('gpt-4o-mini'),
+      model: google('gemini-2.5-flash'),
       messages,
-      toolCallStreaming: true,
       tools,
-      maxSteps: 2,
     });
 
-    return result.toDataStreamResponse({
-      getErrorMessage: errorHandler,
-    });
+    return result.toTextStreamResponse();
   } catch (err) {
-    console.error('Global error:', err);
-    const errorMessage = errorHandler(err);
-    return new Response(errorMessage, { status: 500 });
+    console.error('❌ Global error:', err);
+    return new Response(errorHandler(err), { status: 500 });
   }
 }

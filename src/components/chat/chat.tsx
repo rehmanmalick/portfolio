@@ -17,66 +17,50 @@ import {
 } from '@/components/ui/chat/chat-bubble';
 import WelcomeModal from '@/components/welcome-modal';
 import { Info } from 'lucide-react';
-import { GithubButton } from '../ui/github-button';
 import HelperBoost from './HelperBoost';
 
-// ClientOnly component for client-side rendering
-//@ts-ignore
-const ClientOnly = ({ children }) => {
+// ClientOnly component
+const ClientOnly = ({ children }: { children: React.ReactNode }) => {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  if (!hasMounted) {
-    return null;
-  }
-
+  if (!hasMounted) return null;
   return <>{children}</>;
 };
 
-// Define Avatar component props interface
+// Avatar props
 interface AvatarProps {
   hasActiveTool: boolean;
   videoRef: React.RefObject<HTMLVideoElement | null>;
   isTalking: boolean;
 }
 
-// Dynamic import of Avatar component
+// Dynamic Avatar
 const Avatar = dynamic<AvatarProps>(
   () =>
-    Promise.resolve(({ hasActiveTool, videoRef, isTalking }: AvatarProps) => {
-      // This function will only execute on the client
+    Promise.resolve(({ hasActiveTool, videoRef }: AvatarProps) => {
       const isIOS = () => {
-        // Multiple detection methods
+        if (typeof window === 'undefined') return false;
         const userAgent = window.navigator.userAgent;
         const platform = window.navigator.platform;
         const maxTouchPoints = window.navigator.maxTouchPoints || 0;
 
-        // UserAgent-based check
-        const isIOSByUA =
-          //@ts-ignore
-          /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-
-        // Platform-based check
-        const isIOSByPlatform = /iPad|iPhone|iPod/.test(platform);
-
-        // iPad Pro check
-        const isIPadOS =
-          //@ts-ignore
-          platform === 'MacIntel' && maxTouchPoints > 1 && !window.MSStream;
-
-        // Safari check
-        const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
-
-        return isIOSByUA || isIOSByPlatform || isIPadOS || isSafari;
+        return (
+          /iPad|iPhone|iPod/.test(userAgent) ||
+          /iPad|iPhone|iPod/.test(platform) ||
+          (platform === 'MacIntel' && maxTouchPoints > 1) ||
+          (/Safari/.test(userAgent) && !/Chrome/.test(userAgent))
+        );
       };
 
-      // Conditional rendering based on detection
       return (
         <div
-          className={`flex items-center justify-center rounded-full transition-all duration-300 ${hasActiveTool ? 'h-20 w-20' : 'h-28 w-28'}`}
+          className={`flex items-center justify-center rounded-full transition-all duration-300 ${
+            hasActiveTool ? 'h-20 w-20' : 'h-28 w-28'
+          }`}
         >
           <div
             className="relative cursor-pointer"
@@ -85,7 +69,7 @@ const Avatar = dynamic<AvatarProps>(
             {isIOS() ? (
               <img
                 src="/landing-memojis.png"
-                alt="iOS avatar"
+                alt="Avatar"
                 className="h-full w-full scale-[1.8] object-contain"
               />
             ) : (
@@ -111,10 +95,7 @@ const MOTION_CONFIG = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: 20 },
-  transition: {
-    duration: 0.3,
-    ease: 'easeOut',
-  },
+  transition: { duration: 0.3 },
 };
 
 const Chat = () => {
@@ -125,59 +106,39 @@ const Chat = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [isTalking, setIsTalking] = useState(false);
 
+  // ✅ Use the correct useChat hook
   const {
     messages,
     input,
     handleInputChange,
-    handleSubmit,
     isLoading,
     stop,
-    setMessages,
     setInput,
-    reload,
-    addToolResult,
-    append,
+    sendMessage,
+    status,
   } = useChat({
-    onResponse: (response) => {
-      if (response) {
-        setLoadingSubmit(false);
-        setIsTalking(true);
-        if (videoRef.current) {
-          videoRef.current.play().catch((error) => {
-            console.error('Failed to play video:', error);
-          });
-        }
-      }
-    },
-    onFinish: () => {
+    onFinish: (message) => {
+      console.log('✅ Message finished:', message);
       setLoadingSubmit(false);
       setIsTalking(false);
-      if (videoRef.current) {
-        videoRef.current.pause();
-      }
+      videoRef.current?.pause();
     },
     onError: (error) => {
+      console.error('❌ Chat error:', error);
       setLoadingSubmit(false);
       setIsTalking(false);
-      if (videoRef.current) {
-        videoRef.current.pause();
-      }
-      console.error('Chat error:', error.message, error.cause);
+      videoRef.current?.pause();
       toast.error(`Error: ${error.message}`);
-    },
-    onToolCall: (tool) => {
-      const toolName = tool.toolCall.toolName;
-      console.log('Tool call:', toolName);
     },
   });
 
   const { currentAIMessage, latestUserMessage, hasActiveTool } = useMemo(() => {
-    const latestAIMessageIndex = messages.findLastIndex(
-      (m) => m.role === 'assistant'
-    );
-    const latestUserMessageIndex = messages.findLastIndex(
-      (m) => m.role === 'user'
-    );
+    const latestAIMessageIndex = messages?.findLastIndex(
+      (m: any) => m.role === 'assistant'
+    ) ?? -1;
+    const latestUserMessageIndex = messages?.findLastIndex(
+      (m: any) => m.role === 'user'
+    ) ?? -1;
 
     const result = {
       currentAIMessage:
@@ -189,10 +150,8 @@ const Chat = () => {
 
     if (result.currentAIMessage) {
       result.hasActiveTool =
-        result.currentAIMessage.parts?.some(
-          (part) =>
-            part.type === 'tool-invocation' &&
-            part.toolInvocation?.state === 'result'
+        result.currentAIMessage.toolInvocations?.some(
+          (invocation: any) => invocation.state === 'result'
         ) || false;
     }
 
@@ -203,26 +162,43 @@ const Chat = () => {
     return result;
   }, [messages]);
 
-  const isToolInProgress = messages.some(
-    (m) =>
+  const isToolInProgress = messages?.some(
+    (m: any) =>
       m.role === 'assistant' &&
-      m.parts?.some(
-        (part) =>
-          part.type === 'tool-invocation' &&
-          part.toolInvocation?.state !== 'result'
-      )
-  );
+      m.toolInvocations?.some((invocation: any) => invocation.state !== 'result')
+  ) || false;
 
-  //@ts-ignore
-  const submitQuery = (query) => {
-    if (!query.trim() || isToolInProgress) return;
+  const submitQuery = (query: string) => {
+    console.log('🚀 submitQuery called with:', query);
+    console.log('🔍 sendMessage exists:', !!sendMessage);
+    
+    if (!query.trim() || isToolInProgress) {
+      console.warn('⚠️ Query rejected: empty or tool in progress');
+      return;
+    }
+    
+    if (!sendMessage) {
+      console.error('❌ sendMessage function not available');
+      toast.error('Chat functionality not ready. Please refresh the page.');
+      return;
+    }
+
     setLoadingSubmit(true);
-    append({
-      role: 'user',
-      content: query,
-    });
+    setIsTalking(true);
+    videoRef.current?.play().catch(console.error);
+    
+    try {
+      sendMessage({ role: 'user', content: query });
+      console.log('✅ Message sent successfully');
+    } catch (error) {
+      console.error('❌ Error sending message:', error);
+      toast.error('Failed to send message');
+      setLoadingSubmit(false);
+      setIsTalking(false);
+    }
   };
 
+  // Initialize video
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.loop = true;
@@ -230,48 +206,59 @@ const Chat = () => {
       videoRef.current.playsInline = true;
       videoRef.current.pause();
     }
+  }, []);
 
-    if (initialQuery && !autoSubmitted) {
+  // Auto-submit from URL
+  useEffect(() => {
+    if (initialQuery && !autoSubmitted && sendMessage) {
+      console.log('🚀 Auto-submitting query:', initialQuery);
       setAutoSubmitted(true);
-      setInput('');
+      if (setInput) setInput('');
       submitQuery(initialQuery);
     }
-  }, [initialQuery, autoSubmitted]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery, autoSubmitted, sendMessage]);
 
+  // Video animation
   useEffect(() => {
     if (videoRef.current) {
       if (isTalking) {
-        videoRef.current.play().catch((error) => {
-          console.error('Failed to play video:', error);
-        });
+        videoRef.current.play().catch(console.error);
       } else {
         videoRef.current.pause();
       }
     }
   }, [isTalking]);
 
-  //@ts-ignore
-  const onSubmit = (e) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isToolInProgress) return;
+    if (!input?.trim() || isToolInProgress) return;
     submitQuery(input);
-    setInput('');
+    if (setInput) setInput('');
   };
 
   const handleStop = () => {
-    stop();
+    if (stop) stop();
     setLoadingSubmit(false);
     setIsTalking(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+    videoRef.current?.pause();
   };
 
-  // Check if this is the initial empty state (no messages)
-  const isEmptyState =
-    !currentAIMessage && !latestUserMessage && !loadingSubmit;
+  // Provide a dummy reload function since it's not in the useChat return
+  const reload = () => {
+    if (messages.length > 0) {
+      const lastUserMessage = messages
+        .slice()
+        .reverse()
+        .find((m: any) => m.role === 'user');
+      if (lastUserMessage) {
+        submitQuery(lastUserMessage.content);
+      }
+    }
+    return Promise.resolve(null);
+  };
 
-  // Calculate header height based on hasActiveTool
+  const isEmptyState = !currentAIMessage && !latestUserMessage && !loadingSubmit;
   const headerHeight = hasActiveTool ? 100 : 180;
 
   return (
@@ -284,17 +271,9 @@ const Chat = () => {
             </div>
           }
         />
-        <div className="">
-          <GithubButton
-            animationDuration={1.5}
-            label="Star"
-            size={'sm'}
-            repoUrl="https://github.com/toukoum/portfolio"
-          />
-        </div>
       </div>
 
-      {/* Fixed Avatar Header with Gradient */}
+      {/* Fixed Avatar Header */}
       <div
         className="fixed top-0 right-0 left-0 z-50"
         style={{
@@ -303,7 +282,9 @@ const Chat = () => {
         }}
       >
         <div
-          className={`transition-all duration-300 ease-in-out ${hasActiveTool ? 'pt-6 pb-0' : 'py-6'}`}
+          className={`transition-all duration-300 ease-in-out ${
+            hasActiveTool ? 'pt-6 pb-0' : 'py-6'
+          }`}
         >
           <div className="flex justify-center">
             <ClientOnly>
@@ -318,7 +299,10 @@ const Chat = () => {
           <AnimatePresence>
             {latestUserMessage && !currentAIMessage && (
               <motion.div
-                {...MOTION_CONFIG}
+                initial={MOTION_CONFIG.initial}
+                animate={MOTION_CONFIG.animate}
+                exit={MOTION_CONFIG.exit}
+                transition={MOTION_CONFIG.transition}
                 className="mx-auto flex max-w-3xl px-4"
               >
                 <ChatBubble variant="sent">
@@ -327,7 +311,7 @@ const Chat = () => {
                       message={latestUserMessage}
                       isLast={true}
                       isLoading={false}
-                      reload={() => Promise.resolve(null)}
+                      reload={reload}
                     />
                   </ChatBubbleMessage>
                 </ChatBubble>
@@ -337,9 +321,8 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="container mx-auto flex h-full max-w-3xl flex-col">
-        {/* Scrollable Chat Content */}
         <div
           className="flex-1 overflow-y-auto px-2"
           style={{ paddingTop: `${headerHeight}px` }}
@@ -348,8 +331,11 @@ const Chat = () => {
             {isEmptyState ? (
               <motion.div
                 key="landing"
+                initial={MOTION_CONFIG.initial}
+                animate={MOTION_CONFIG.animate}
+                exit={MOTION_CONFIG.exit}
+                transition={MOTION_CONFIG.transition}
                 className="flex min-h-full items-center justify-center"
-                {...MOTION_CONFIG}
               >
                 <ChatLanding submitQuery={submitQuery} />
               </motion.div>
@@ -359,14 +345,16 @@ const Chat = () => {
                   message={currentAIMessage}
                   isLoading={isLoading}
                   reload={reload}
-                  addToolResult={addToolResult}
                 />
               </div>
             ) : (
               loadingSubmit && (
                 <motion.div
                   key="loading"
-                  {...MOTION_CONFIG}
+                  initial={MOTION_CONFIG.initial}
+                  animate={MOTION_CONFIG.animate}
+                  exit={MOTION_CONFIG.exit}
+                  transition={MOTION_CONFIG.transition}
                   className="px-4 pt-18"
                 >
                   <ChatBubble variant="received">
@@ -378,7 +366,7 @@ const Chat = () => {
           </AnimatePresence>
         </div>
 
-        {/* Fixed Bottom Bar */}
+        {/* Bottom Bar */}
         <div className="sticky bottom-0 bg-white px-2 pt-3 md:px-0 md:pb-4">
           <div className="relative flex flex-col items-center gap-3">
             <HelperBoost submitQuery={submitQuery} setInput={setInput} />
@@ -392,6 +380,7 @@ const Chat = () => {
             />
           </div>
         </div>
+
         <a
           href="https://x.com/toukoumcode"
           target="_blank"

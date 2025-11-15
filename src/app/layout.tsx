@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import "./globals.css";
+import './globals.css';
 
 // Load Inter font for non-Apple devices
 const inter = Inter({ 
